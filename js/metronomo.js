@@ -10,34 +10,38 @@ $("#bpm").change(function(){
     $("#lbpm").text(this.value + "  BPM");
     
     stop();
-    $("#metroOn").focus();
+    //$("#metroOn").focus();
     metro = setInterval(start, 60/bpm * 1000);
 } );     
 
+//pulsações
 $("input:radio[name='pulsos']").change( () => setComp());
 
+//on off
 $("#metroOn").click(function(){                        
     // console.log('iniciado');  
-    stop();              
+    stop();
+    $(this).addClass('active')        
     metro = setInterval(start, 60/bpm * 1000);
 });
 
-
-$("#metroOff").click( () => stop());
+$("#metroOff").click( 
+    function(){
+        stop();
+         $(this).addClass('active');  
+        }
+    );
 
 function setComp(){            
     //compassos = $(".compassos :selected").val();             
-    compassos = $('input[name="pulsos"]:checked').val();                                    
+    compassos = $('input[name="pulsos"]:checked').val();    
+    $('button').removeClass('active');                                  
 }
 
 //funcoes
-function stop(){
-    window.clearInterval(metro);                              
-    for(x=1;x<(compassos + 1);x++){
-        //reset style
-        $("#p" + x).removeClass('pulse');
-    }        
-    i=0;  
+function stop(){   
+    $('button').removeClass('active');  
+    window.clearInterval(metro);        
 }
 
 function start(){
@@ -52,5 +56,5 @@ function fig(i){
 }
 
 function mark(){            
-    $("#p" + i).toggleClass('pulse');                                
+    $("#p" + i).toggleClass('active');                                
 }

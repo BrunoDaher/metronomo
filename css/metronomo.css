@@ -36,15 +36,14 @@ legend, .card-header{
 
 .on{
     background-color:green;
-    opacity: 40%;
-    border-color:white;
+    opacity: 40%;    
+    transition: all 0.2s
 }
 
 .off{
     background-color:red;
     opacity: 40%;
-    border-color:white;
-    
+    transition: all 0.2s;
 }
 
 select{
@@ -57,13 +56,12 @@ select{
     font-size: 30px;
 }
 
+button{
+    outline: none;
+}
 
-button:focus, button:hover{
-    opacity: 100%;
-    cursor: pointer;    
-    border-color: white;
-    border-width: 5px;
-    border-style: ridge;
+.active, .on:hover, .off:hover{
+    opacity: 100% !important;
 }
 
 .txtWhite, .on, .off{
@@ -127,5 +125,6 @@ input[type=radio]{
  }
 
  .pulse {
+     opacity: 40%;
      color:white !important;              
  }
