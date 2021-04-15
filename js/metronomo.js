@@ -52,9 +52,10 @@ function start(){
 
 function fig(i){                            
     setTimeout(mark,150);
+    
+    function mark(){            
+        $("#p" + i).toggleClass('active');                                
+    }
     mark();
 }
 
-function mark(){            
-    $("#p" + i).toggleClass('active');                                
-}

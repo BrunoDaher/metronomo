@@ -1,16 +1,15 @@
 
 .bpm{
-    font-size: 30px;
+    font-size: 1.2em;
     font-family: sans-serif;       
 }
-
 
 
 legend, .card-header{
     border-color:aliceblue;            
     color:white;
     /*top right botton left*/
-    padding: 4px 12px 4px 12px;
+    
     font-family: sans-serif;    
     font-size: 20px;                                
 }
@@ -21,8 +20,8 @@ legend, .card-header{
     border-color:white;                
 }
 
-.card-header, button, .f140{    
-    font-size: 140%;    
+.card-header, button {    
+    font-size: 2em    
 }
 
 .bg-white{
@@ -88,7 +87,7 @@ button{
 
 /*tudo com borda radius*/
 .rad, fieldset, .card, .cardMaster,  button, legend{
-    border-radius:4px;            
+    border-radius:7px;            
 }
 
 input[type=radio]{
