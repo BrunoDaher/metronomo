@@ -1,0 +1,131 @@
+
+.bpm{
+    font-size: 30px;
+    font-family: sans-serif;       
+}
+
+
+
+legend, .card-header{
+    border-color:aliceblue;            
+    color:white;
+    /*top right botton left*/
+    padding: 4px 12px 4px 12px;
+    font-family: sans-serif;    
+    font-size: 20px;                                
+}
+
+
+.bg-theme {
+    background-color: rgb(28, 38, 39);
+    border-color:white;                
+}
+
+.card-header, button, .f140{    
+    font-size: 140%;    
+}
+
+.bg-white{
+    background-color:white;
+    color:black;
+}
+
+.font-center{            
+    text-align: center;
+}
+
+.on{
+    background-color:green;
+    opacity: 40%;
+    border-color:white;
+}
+
+.off{
+    background-color:red;
+    opacity: 40%;
+    border-color:white;
+    
+}
+
+select{
+    background-color:black;
+    color:wheat;
+    text-align: center;
+    width: 25%;
+    height: 52px;
+    margin-top: 7px;    
+    font-size: 30px;
+}
+
+
+button:focus, button:hover{
+    opacity: 100%;
+    cursor: pointer;    
+    border-color: white;
+    border-width: 5px;
+    border-style: ridge;
+}
+
+.txtWhite, .on, .off{
+    color:white;
+}
+
+.cardMaster{                      
+    padding: 10px;            
+    background-color:white;
+    border-radius:3px;                        
+}
+
+.card{    
+    margin-bottom: 0.5em;
+}
+
+.p-2{
+    padding:2%;
+}
+
+.p-3{
+    padding:4%;
+}
+
+/*tudo com borda radius*/
+.rad, fieldset, .card, .cardMaster,  button, legend{
+    border-radius:4px;            
+}
+
+input[type=radio]{
+    transform: scale(2.05);
+    cursor: pointer;
+    word-spacing: 10px;
+    transition: all 0.2s ease;
+}
+
+.metro{
+    width: 100%;
+    position: relative;
+}
+
+.bg-dark{
+    background-color:#1b191b;        
+}
+
+.compasso{ 
+    font-family: sans-serif;            
+    text-align: left;
+    margin-top:1em; /*margem externa superior*/
+    padding:10px; /*margem interna*/    
+    text-align: center;
+    word-spacing: 4em;
+    background-color:black;
+}
+
+.compasso > a{        
+    font-weight: 600;
+    margin-top: 2em;
+    font-size: 7em;
+    color:rgb(70, 69, 68);
+ }
+
+ .pulse {
+     color:white !important;              
+ }

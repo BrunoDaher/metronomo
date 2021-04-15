@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalas</title>    
+    <script src="js/jquery-1.9.1.js"></script>
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/metronomo.css">    
+</head>
+<body style="background-color:black">
+    <fieldset class="p-2 bg-theme">
+        <legend class="bg-dark">Metronomo</legend>
+        <div class='cardMaster font-center bg-dark'>            
+                <div class="card bpm bg-dark p-2">
+                    <div class='card-header bg-dark' id='lbpm' for='bpm'>120 BPM</div>                     
+                    <input type="range" min="1" max="240" value="120" id="bpm"> 
+                    
+                    <div>
+                        <button id='metroOn' class="rad on">ON</button>
+                        <button id='metroOff' class="rad off">Off</button>    
+                        <br><br>                                            
+                    </div>
+                </div>               
+                
+                <div class='card p-2 bg-theme'>                
+                    <legend class='bg-dark p-2 txtWhite'>COMPASSOS</legend>                 
+                    <form class="bg-dark p-3 f140 txtWhite">                                           
+                        <input type="radio" name="pulsos" value='1' >
+                        <label>1</label>
+                        <input type="radio"  name="pulsos" value='2'>
+                        <label>2</label>
+                        <input type="radio"  name="pulsos" value='3'>
+                        <label>3</label>
+                        <input type="radio"  name="pulsos" checked value='4'>
+                        <label>4</label>
+                      </form>
+                </div>
+            
+            <div id="compasso" class="compasso rad">                    
+                <a id='p1'>1</a>
+                <a id='p2'>2</a>
+                <a id='p3'>3</a>
+                <a id='p4'>4</a>          
+            </div>  
+        </div>
+        </div>
+    </fieldset>
+    <script src="js/metronomo.js"></script>
+
+</body>
+</html>
+
+
