@@ -1,16 +1,14 @@
 
-var metro = null;
-var bpm = $("#bpm").val();
-var i = 0;
-var compassos = 4;
+let metro = null;
+let bpm = $("#bpm").val();
+let i = 0;
+let compassos = 4;
 
 //triggers
 $("#bpm").change(function(){                    
     bpm = this.value;
-    $("#lbpm").text(this.value + "  BPM");
-    
-    stop();
-    //$("#metroOn").focus();
+    stop()
+    $("#lbpm").text(this.value + "  BPM");   
     metro = setInterval(start, 60/bpm * 1000);
 } );     
 
@@ -46,16 +44,16 @@ function stop(){
 
 function start(){
     //ternario
+    $("#metroOn").addClass('active');    
     i<compassos?i++:i=1;
     fig(i);        
 }
 
 function fig(i){                            
     setTimeout(mark,150);
-    
-    function mark(){            
-        $("#p" + i).toggleClass('active');                                
-    }
     mark();
 }
 
+function mark(){            
+    $("#p" + i).toggleClass('active');                                
+}
