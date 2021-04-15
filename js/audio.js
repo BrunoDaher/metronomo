@@ -13,6 +13,7 @@ function playNote(frequency, type, amp) {
           o.frequency.value = frequency;
           g.connect(audioContext.destination);
           o.start();
+          getAudioContext().resume();
           g.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.1 );                                                         // volume , sustain
           g.gain.setValueAtTime((g.gain.value*amp)/frequency,audioContext.currentTime);      
       },0)  
