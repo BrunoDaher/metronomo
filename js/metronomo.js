@@ -49,7 +49,7 @@ function start(){
     play();
         
     function play(){
-     playNote(i==1?'100':'120','sawtooth',i==1?'100':'30');   
+     playNote(i==1?'100':'110','sine',i==1?'160':'30');   
     }
     
     fig();        
