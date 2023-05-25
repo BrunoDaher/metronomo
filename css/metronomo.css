@@ -15,13 +15,13 @@ legend, .card-header{
     /*top right botton left*/
     
     font-family: sans-serif;    
-    font-size: 20px;                                
+    font-size: 6vh;                                
 }
 
 .grid4{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 25vh;
+    /*gap: 25vh;*/
     font-size: 7vh;
 }
 

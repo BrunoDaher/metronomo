@@ -3,6 +3,7 @@ let metronomo = null;
 let bpm = $("#bpm").val();
 let i = 0;
 let pulsos = 4;
+let compassos = 1;
 
 //triggers
 $("#bpm").change(function(){                    
