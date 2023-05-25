@@ -13,9 +13,9 @@ $("#bpm").change(function(){
 } );     
 
 //pulsações
-$("input:radio[name='pulsos']").change( () => setComp());
+$("input:radio[name='pulsos']").change( () => setPulses());
 
-$("#qtdPulsos").change(setComp);
+$("#qtdPulsos").change(setPulses);
 
 //on off
 $("#metroOn").click(function(){                        
@@ -29,12 +29,37 @@ $("#metroOff").click(function(){
     $(this).addClass('active');  
 });
 
-function setComp(){     
-      pulsos = this.value   
+function setPulses(){     
+      pulsos = this.value   ;
     //compassos = $(".compassos :selected").val();             
     //compassos = $('input[name="pulsos"]:checked').val();    
   //  $('button').removeClass('active');     
-                          
+  
+        if (pulsos < 4){
+            $("#p4").addClass('none');  
+        }
+
+        if (pulsos < 3){
+            $("#p3").addClass('none');  
+        }
+
+        if (pulsos < 2){
+            $("#p2").addClass('none');  
+        }
+//----------------
+        if (pulsos == 4){
+            $("#p4").removeClass('none');  
+            $("#p3").removeClass('none');  
+        }
+
+        if (pulsos == 3){
+            $("#p3").removeClass('none');  
+        }
+
+        if (pulsos == 2){
+            $("#p2").removeClass('none');  
+        }
+
 }
 
 //funcoes
@@ -47,6 +72,9 @@ function start(){
     //ternario
     $("#metroOn").addClass('active');    
     i<pulsos?i++:i=1;
+
+    
+   // $("#p" + i).toggleClass('active');  
 
     //setTimeout(play,0);
     
@@ -65,6 +93,6 @@ function fig(){
 }
 
 function mark(){           
-    
     $("#p" + i).toggleClass('active');                                
 }
+

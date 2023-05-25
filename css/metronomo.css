@@ -4,6 +4,10 @@
     font-family: sans-serif;       
 }
 
+.none{
+display: none;
+}
+
 
 legend, .card-header{
     border-color:aliceblue;            
