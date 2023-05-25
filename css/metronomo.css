@@ -14,6 +14,12 @@ legend, .card-header{
     font-size: 20px;                                
 }
 
+.grid4{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 25vh;
+    font-size: 7vh;
+}
 
 .bg-theme {
     background-color: rgb(28, 38, 39);

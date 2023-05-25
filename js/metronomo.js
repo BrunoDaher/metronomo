@@ -2,7 +2,7 @@
 let metronomo = null;
 let bpm = $("#bpm").val();
 let i = 0;
-let compassos = 4;
+let pulsos = 4;
 
 //triggers
 $("#bpm").change(function(){                    
@@ -14,6 +14,8 @@ $("#bpm").change(function(){
 
 //pulsações
 $("input:radio[name='pulsos']").change( () => setComp());
+
+$("#qtdPulsos").change(setComp);
 
 //on off
 $("#metroOn").click(function(){                        
@@ -27,10 +29,12 @@ $("#metroOff").click(function(){
     $(this).addClass('active');  
 });
 
-function setComp(){            
+function setComp(){     
+      pulsos = this.value   
     //compassos = $(".compassos :selected").val();             
-    compassos = $('input[name="pulsos"]:checked').val();    
-    $('button').removeClass('active');                                  
+    //compassos = $('input[name="pulsos"]:checked').val();    
+  //  $('button').removeClass('active');     
+                          
 }
 
 //funcoes
@@ -42,7 +46,7 @@ function stop(){
 function start(){
     //ternario
     $("#metroOn").addClass('active');    
-    i<compassos?i++:i=1;
+    i<pulsos?i++:i=1;
 
     //setTimeout(play,0);
     
