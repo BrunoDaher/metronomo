@@ -1065,84 +1065,141 @@ input:checked+.slider:before {
   box-shadow: 0 0 20px var(--accent-color, #f59e0b);
 }
 
+/* Subdivisões Screen Header Readout & Hint */
+.metro-subdiv-bpm-readout {
+  padding: 0 8px;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.metro-swipe-hint {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--colorD, #9ca3af);
+  opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 7px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+
+/* Swiper Carousel Container & Slides */
+.metro-swiper-wrap {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 4px 0 6px 0;
+}
+
+.metro-swiper {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 4px 4px 8px 4px !important;
+  overflow: visible !important;
+}
+
+.metro-swiper-slide {
+  width: auto !important;
+  display: flex !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box;
+}
+
 /* Metric Compassos Buttons */
 .metro-metric-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--colorB);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 800;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--colorB, #f3f4f6);
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  min-width: 48px;
+  justify-content: center;
+  gap: 3px;
+  min-width: 82px;
+  user-select: none;
+  touch-action: pan-y;
 }
 
 .metro-metric-btn:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .metro-metric-btn.active {
-  background: var(--accent-color, #f59e0b);
-  color: #000;
-  border-color: var(--accent-color, #f59e0b);
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+  background: var(--accent-color, #f59e0b) !important;
+  color: #000 !important;
+  border-color: var(--accent-color, #f59e0b) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45);
+  transform: scale(1.02);
+}
+
+.metro-metric-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .metro-metric-label {
-  font-size: 0.62rem;
-  font-weight: 600;
-  opacity: 0.75;
+  font-size: 0.64rem;
+  font-weight: 700;
+  opacity: 0.8;
   text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 /* Subdivisões Musicais Buttons */
 .metro-subdiv-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--colorB);
-  padding: 10px 12px;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--colorB, #f3f4f6);
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  min-width: 72px;
+  min-width: 108px;
+  user-select: none;
+  touch-action: pan-y;
 }
 
 .metro-subdiv-btn:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .metro-subdiv-btn.active {
-  background: var(--colorC, #38bdf8);
-  color: #000;
-  border-color: var(--colorC, #38bdf8);
-  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.4);
+  background: var(--colorC, #38bdf8) !important;
+  color: #000 !important;
+  border-color: var(--colorC, #38bdf8) !important;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.45);
+  transform: scale(1.02);
 }
 
 .metro-subdiv-name {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 800;
+  letter-spacing: 0.2px;
 }
 
 .metro-subdiv-meta {
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
   opacity: 0.85;
 }
 
