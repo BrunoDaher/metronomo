@@ -13,6 +13,34 @@
   --colorE: #60a5fa;
   --vg-accent-gold: #f59e0b;
   --vg-accent-gold-glow: rgba(245, 158, 11, 0.35);
+
+  /* Metronome & App Theme Variables */
+  --app-bg: radial-gradient(circle at 50% 20%, #1a1b20 0%, #0c0d10 100%);
+  --header-bg: rgba(18, 19, 23, 0.88);
+  --accent-color: #f59e0b;
+
+  --metro-case-bg: linear-gradient(145deg, #3d2314 0%, #22120a 50%, #150a05 100%);
+  --metro-case-border: #5a3821;
+  --metro-cap-bg: linear-gradient(180deg, #4f2e1a 0%, #2f190d 100%);
+  --metro-cap-border: #6b4328;
+  --metro-brand-color: #dfba62;
+  --metro-subtext-color: #9d8048;
+
+  --metro-dial-bg: linear-gradient(180deg, #1f1b16 0%, #2a241d 50%, #181512 100%);
+  --metro-dial-border: #4a3825;
+  --metro-scale-color: rgba(223, 186, 98, 0.75);
+  --metro-scale-active-color: #ffd700;
+  --metro-scale-active-bg: rgba(223, 186, 98, 0.22);
+
+  --metro-pendulum-arm: linear-gradient(90deg, #bfa04a, #ffefa0, #8f742c);
+  --metro-weight-bg: linear-gradient(135deg, #e3be5b 0%, #fff7be 45%, #a88426 100%);
+  --metro-weight-border: #694d0c;
+  --metro-weight-text: #2c1b02;
+
+  --metro-base-bg: linear-gradient(180deg, #2a150b 0%, #150904 100%);
+  --metro-base-border: #5a3821;
+  --metro-play-btn: linear-gradient(145deg, #2563eb, #1d4ed8);
+  --metro-tempo-color: #dfba62;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color-scheme: dark;
 }
@@ -23,7 +51,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   overflow-x: hidden;
   max-width: 100vw;
 }
@@ -37,29 +66,83 @@ body {
 }
 
 /* Flex & Layout utilities */
-.flex { display: flex; }
-.flexrow { display: flex; flex-direction: row; }
-.flexcol { display: flex; flex-direction: column; }
-.flexColCenter { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.flexColBetween { display: flex; flex-direction: column; justify-content: space-between; }
-.itemCenter { align-items: center; }
-.justCenter { justify-content: center; }
-.justContBetween { justify-content: space-between; }
-.flexWrap { flex-wrap: wrap; }
-.flex1 { flex: 1; }
-.w-100 { width: 100%; }
+.flex {
+  display: flex;
+}
 
-.gap1 { gap: 0.5rem; }
-.gap2 { gap: 1rem; }
-.p-1 { padding: 0.5rem; }
-.p-2 { padding: 1rem; }
-.rad { border-radius: 8px; }
+.flexrow {
+  display: flex;
+  flex-direction: row;
+}
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexColCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flexColBetween {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.itemCenter {
+  align-items: center;
+}
+
+.justCenter {
+  justify-content: center;
+}
+
+.justContBetween {
+  justify-content: space-between;
+}
+
+.flexWrap {
+  flex-wrap: wrap;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.gap1 {
+  gap: 0.5rem;
+}
+
+.gap2 {
+  gap: 1rem;
+}
+
+.p-1 {
+  padding: 0.5rem;
+}
+
+.p-2 {
+  padding: 1rem;
+}
+
+.rad {
+  border-radius: 8px;
+}
 
 .comp {
   background: var(--fundoE);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 .bgDark {
   background: var(--fundoD);
 }
@@ -76,11 +159,13 @@ body {
   height: 24px;
   flex-shrink: 0;
 }
+
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
+
 .slider {
   position: absolute;
   cursor: pointer;
@@ -91,6 +176,7 @@ body {
   background-color: #374151;
   transition: .3s;
 }
+
 .slider:before {
   position: absolute;
   content: "";
@@ -101,18 +187,23 @@ body {
   background-color: white;
   transition: .3s;
 }
-input:checked + .slider {
+
+input:checked+.slider {
   background-color: #f59e0b;
 }
-input:focus + .slider {
+
+input:focus+.slider {
   box-shadow: 0 0 1px #f59e0b;
 }
-input:checked + .slider:before {
+
+input:checked+.slider:before {
   transform: translateX(20px);
 }
+
 .slider.round {
   border-radius: 24px;
 }
+
 .slider.round:before {
   border-radius: 50%;
 }
@@ -129,10 +220,12 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .preset-tempo-pill:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
 .preset-tempo-pill.active {
   background: var(--vg-accent-gold);
   color: #000;
@@ -151,10 +244,12 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .metro-step-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   color: #fff;
 }
+
 .metro-step-btn:active {
   transform: scale(0.95);
 }
@@ -190,15 +285,19 @@ input:checked + .slider:before {
   border-radius: 3px;
 }
 
+.metro-box {
+  background-color: var(--fundoE);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
 /* Header & View Switcher */
 .metro-header {
   position: sticky;
   top: 0;
   border-radius: 8px;
   z-index: 15;
-  background-color: var(--fundoE);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -305,17 +404,16 @@ input:checked + .slider:before {
 
 .metro-content-container.view-analog .metro-analog-section {
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
   min-width: 0;
   margin: 0 auto;
-  background: var(--fundoC);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.9rem;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+  padding: 0 !important;
 }
 
 .metro-content-container.view-digital {
@@ -345,13 +443,13 @@ input:checked + .slider:before {
   width: 100%;
   max-width: min(320px, 92vw);
   height: clamp(470px, 68vh, 540px);
-  background: linear-gradient(145deg, #3d2314 0%, #22120a 50%, #150a05 100%);
+  background: var(--metro-case-bg, linear-gradient(145deg, #3d2314 0%, #22120a 50%, #150a05 100%));
   border-radius: 12px 12px 8px 8px;
   box-shadow:
     0 14px 32px rgba(0, 0, 0, 0.75),
     inset 0 1px 2px rgba(255, 215, 0, 0.3),
     inset 0 -2px 6px rgba(0, 0, 0, 0.8);
-  border: 2px solid #5a3821;
+  border: 2px solid var(--metro-case-border, #5a3821);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -362,8 +460,8 @@ input:checked + .slider:before {
 
 /* Top Wood Cap with Engraved Brand */
 .case-top-cap {
-  background: linear-gradient(180deg, #4f2e1a 0%, #2f190d 100%);
-  border-bottom: 2px solid #6b4328;
+  background: var(--metro-cap-bg, linear-gradient(180deg, #4f2e1a 0%, #2f190d 100%));
+  border-bottom: 2px solid var(--metro-cap-border, #6b4328);
   padding: 6px 10px 4px 10px;
   text-align: center;
   display: flex;
@@ -377,14 +475,14 @@ input:checked + .slider:before {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #dfba62;
+  color: var(--metro-brand-color, #dfba62);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .case-subtext {
   font-size: 0.52rem;
   letter-spacing: 1.5px;
-  color: #9d8048;
+  color: var(--metro-subtext-color, #9d8048);
   text-transform: uppercase;
   margin-top: 1px;
 }
@@ -394,12 +492,12 @@ input:checked + .slider:before {
   position: relative;
   flex: 1;
   margin: 6px 10px 4px 10px;
-  background: linear-gradient(180deg, #1f1b16 0%, #2a241d 50%, #181512 100%);
+  background: var(--metro-dial-bg, linear-gradient(180deg, #1f1b16 0%, #2a241d 50%, #181512 100%));
   border-radius: 6px;
   box-shadow:
     inset 0 3px 12px rgba(0, 0, 0, 0.85),
     0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 1px solid #4a3825;
+  border: 1px solid var(--metro-dial-border, #4a3825);
   cursor: pointer;
   overflow: hidden;
 }
@@ -436,7 +534,7 @@ input:checked + .slider:before {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
-  color: rgba(223, 186, 98, 0.75);
+  color: var(--metro-scale-color, rgba(223, 186, 98, 0.75));
   pointer-events: auto;
   cursor: pointer;
   padding: 1px 3px;
@@ -448,12 +546,13 @@ input:checked + .slider:before {
 
 .scale-mark-left:hover {
   color: #fff;
-  background: rgba(212, 175, 55, 0.25);
+  background: var(--metro-scale-active-bg, rgba(212, 175, 55, 0.25));
   box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
 }
 
 .scale-mark-left.active {
-  color: #ffd700;
+  color: var(--metro-scale-active-color, #ffd700);
+  background: var(--metro-scale-active-bg, rgba(223, 186, 98, 0.22));
   font-weight: 800;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
@@ -467,7 +566,7 @@ input:checked + .slider:before {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.68rem;
   font-weight: 600;
-  color: rgba(223, 186, 98, 0.75);
+  color: var(--metro-scale-color, rgba(223, 186, 98, 0.75));
   pointer-events: auto;
   cursor: pointer;
   padding: 1px 3px;
@@ -479,12 +578,13 @@ input:checked + .slider:before {
 
 .scale-mark-right:hover {
   color: #fff;
-  background: rgba(212, 175, 55, 0.25);
+  background: var(--metro-scale-active-bg, rgba(212, 175, 55, 0.25));
   box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
 }
 
 .scale-mark-right.active {
-  color: #ffd700;
+  color: var(--metro-scale-active-color, #ffd700);
+  background: var(--metro-scale-active-bg, rgba(223, 186, 98, 0.22));
   font-weight: 800;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
@@ -492,13 +592,13 @@ input:checked + .slider:before {
 /* Oscillating Pendulum Mechanism */
 .pendulum-pivot {
   position: absolute;
-  bottom: 0px;
+  bottom: 16px;
   left: 50%;
   width: 4px;
-  height: 94%;
+  height: 91%;
   transform-origin: bottom center;
   pointer-events: none;
-  z-index: 10;
+  z-index: 0;
 }
 
 .pendulum-pivot.idle {
@@ -529,7 +629,7 @@ input:checked + .slider:before {
   position: relative;
   width: 4px;
   height: 100%;
-  background: linear-gradient(90deg, #bfa04a, #ffefa0, #8f742c);
+  background: var(--metro-pendulum-arm, linear-gradient(90deg, #bfa04a, #ffefa0, #8f742c));
   margin-left: -2px;
   border-radius: 2px;
   box-shadow:
@@ -544,13 +644,13 @@ input:checked + .slider:before {
   transform: translate(-50%, -50%);
   width: 34px;
   height: 25px;
-  background: linear-gradient(135deg, #e3be5b 0%, #fff7be 45%, #a88426 100%);
+  background: var(--metro-weight-bg, linear-gradient(135deg, #e3be5b 0%, #fff7be 45%, #a88426 100%));
   border-radius: 4px;
   box-shadow:
     0 3px 8px rgba(0, 0, 0, 0.65),
     inset 0 1px 1px rgba(255, 255, 255, 0.8),
     inset 0 -1px 2px rgba(0, 0, 0, 0.5);
-  border: 1px solid #7c611c;
+  border: 1px solid var(--metro-weight-border, #7c611c);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -571,7 +671,7 @@ input:checked + .slider:before {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 0.65rem;
   font-weight: 800;
-  color: #3b2804;
+  color: var(--metro-weight-text, #3b2804);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
   z-index: 2;
 }
@@ -590,8 +690,8 @@ input:checked + .slider:before {
 
 /* Base with Pivot Mount & Controls */
 .case-base {
-  background: linear-gradient(180deg, #2a150b 0%, #150904 100%);
-  border-top: 2px solid #5a3821;
+  background: var(--metro-base-bg, linear-gradient(180deg, #2a150b 0%, #150904 100%));
+  border-top: 2px solid var(--metro-base-border, #5a3821);
   padding: 6px 10px 8px 10px;
   display: flex;
   align-items: center;
@@ -602,7 +702,7 @@ input:checked + .slider:before {
 
 .case-pivot-mount {
   position: absolute;
-  top: -7px;
+  top: -26px;
   left: 50%;
   transform: translateX(-50%);
   width: 14px;
@@ -610,7 +710,7 @@ input:checked + .slider:before {
   background: radial-gradient(circle, #ffefa0 0%, #997b2d 70%, #443410 100%);
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-  border: 1px solid #7c611c;
+  border: 1px solid var(--metro-weight-border, #7c611c);
 }
 
 /* Sino / Madeira Switch & Toggle */
@@ -666,7 +766,7 @@ input:checked + .slider:before {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--fundoA);
+  background: var(--metro-play-btn, var(--fundoA));
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   display: flex;
@@ -697,7 +797,7 @@ input:checked + .slider:before {
 .tempo-bpm {
   font-size: 0.8rem;
   font-weight: 800;
-  color: #dfba62;
+  color: var(--metro-tempo-color, #dfba62);
   line-height: 1;
 }
 
@@ -709,7 +809,7 @@ input:checked + .slider:before {
 
 .tempo-label {
   font-size: 0.6rem;
-  color: #a68c5b;
+  color: var(--metro-subtext-color, #a68c5b);
 }
 
 /* ==========================================================================
@@ -721,23 +821,23 @@ input:checked + .slider:before {
   }
 
   .metro-header {
-    padding: 1rem 1.4rem !important;
+    padding: 0.45rem 1rem !important;
   }
 
   .metro-tempo-badge-text {
-    font-size: 1.12rem;
+    font-size: 1.05rem;
   }
 
   .metro-view-btn {
-    padding: 7px 16px;
-    font-size: 0.92rem;
+    padding: 6px 14px;
+    font-size: 0.88rem;
   }
 
   .analog-metronome-case {
     max-width: clamp(380px, 46vw, 440px);
     height: clamp(600px, 72vh, 720px);
     border-radius: 16px 16px 12px 12px;
-    border: 3px solid #6b4328;
+    border: 3px solid var(--metro-case-border, #6b4328);
     box-shadow:
       0 24px 60px rgba(0, 0, 0, 0.85),
       inset 0 2px 4px rgba(255, 215, 0, 0.35),
@@ -746,8 +846,8 @@ input:checked + .slider:before {
 
   /* Top Wood Cap on iPad */
   .case-top-cap {
-    padding: 12px 16px 8px 16px;
-    border-bottom: 3px solid #6b4328;
+    padding: 10px 16px 6px 16px;
+    border-bottom: 3px solid var(--metro-cap-border, #6b4328);
   }
 
   .case-brand {
@@ -766,7 +866,7 @@ input:checked + .slider:before {
   .case-dial {
     margin: 10px 16px 8px 16px;
     border-radius: 8px;
-    border: 2px solid #4a3825;
+    border: 2px solid var(--metro-dial-border, #4a3825);
   }
 
   .pendulum-groove {
@@ -804,7 +904,7 @@ input:checked + .slider:before {
     width: 52px;
     height: 38px;
     border-radius: 6px;
-    border: 1.5px solid #7c611c;
+    border: 1.5px solid var(--metro-weight-border, #7c611c);
     box-shadow:
       0 5px 14px rgba(0, 0, 0, 0.7),
       inset 0 2px 2px rgba(255, 255, 255, 0.85),
@@ -824,8 +924,8 @@ input:checked + .slider:before {
 
   /* Base plate & controls on iPad */
   .case-base {
-    padding: 12px 16px 14px 16px;
-    border-top: 3px solid #5a3821;
+    padding: 10px 16px 12px 16px;
+    border-top: 3px solid var(--metro-base-border, #5a3821);
   }
 
   .case-pivot-mount {

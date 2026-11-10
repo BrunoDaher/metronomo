@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiguraOption } from '../hooks/useMetronome';
 import { AnalogMetronome } from './AnalogMetronome';
+import coelhoImg from '../assets/icoApp.png';
 
 interface MetronomoTabProps {
   bpm: number;
@@ -74,11 +75,21 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
       style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%', maxWidth: '960px', margin: '0 auto' }}
     >
       {/* Top Bar: View Mode Switcher & Global Power */}
-      <div className={`metro-header comp ${deviceType === 'mobile' ? 'p-1' : 'p-2'}`}>
+      <div className="metro-header comp">
         <div className="metro-title flexrow itemCenter gap1">
-          <i className="bi bi-clock-history colorA f3vh" />
+          <img
+            src={coelhoImg}
+            alt="Coelho"
+            style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '1.5px solid var(--accent-color, #f59e0b)'
+            }}
+          />
           <div className="flexcol">
-            <span className="metro-heading">Metrônomo</span>
+
             <span className="metro-tempo-badge-text">{tempoName} • {bpm} BPM</span>
           </div>
         </div>
@@ -124,7 +135,7 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
       <div className={`metro-content-container view-${viewMode} w-100`}>
         {/* ANALOG METRONOME */}
         {viewMode === 'analog' && (
-          <section className={`metro-analog-section comp flexColCenter ${deviceType === 'mobile' ? 'p-1' : 'p-2'}`}>
+          <section className="metro-analog-section flexColCenter">
             <AnalogMetronome
               bpm={bpm}
               isRunning={isRunning}

@@ -1,12 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMetronome } from './hooks/useMetronome';
 import { useDevice } from './hooks/useDevice';
 import { MetronomoTab } from './components/MetronomoTab';
+import { ThemeModal } from './components/ThemeModal';
+import { Theme, getSavedTheme, applyTheme, saveTheme } from './utils/theme';
+import coelhoLogo from './assets/icoApp.png';
 import './styles/metronomo.css';
 
 export const App: React.FC = () => {
   const metronome = useMetronome();
   const device = useDevice();
+
+  // Theme Management
+  const [currentTheme, setCurrentTheme] = useState<Theme>(getSavedTheme);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+
+  useEffect(() => {
+    applyTheme(currentTheme);
+  }, [currentTheme]);
+
+  const handleSelectTheme = (theme: Theme) => {
+    setCurrentTheme(theme);
+    applyTheme(theme);
+    saveTheme(theme.id);
+  };
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -38,74 +55,137 @@ export const App: React.FC = () => {
   }, [metronome]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'radial-gradient(circle at 50% 20%, #1a1b20 0%, #0c0d10 100%)' }}>
-      {/* Top Navbar */}
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--app-bg, radial-gradient(circle at 50% 20%, #1a1b20 0%, #0c0d10 100%))',
+        transition: 'background 0.3s ease'
+      }}
+    >
+      {/* Top Navbar: Compact, sleek with reduced padding & height */}
       <header
         style={{
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(18, 19, 23, 0.85)',
+          background: 'var(--header-bg, rgba(18, 19, 23, 0.88))',
           backdropFilter: 'blur(12px)',
-          padding: '0.75rem 1.5rem',
+          padding: device.isMobile ? '0.35rem 0.75rem' : '0.45rem 1.25rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           position: 'sticky',
           top: 0,
-          zIndex: 50
+          zIndex: 50,
+          minHeight: '44px'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <div
+        {/* Left: Logo (Coelho) associado com "Metrônomo" */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src={coelhoLogo}
+            alt="Coelho VirtuaGuitar"
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#000',
-              fontWeight: 900,
-              boxShadow: '0 2px 10px rgba(245, 158, 11, 0.35)'
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '1.5px solid var(--accent-color, #f59e0b)',
+              boxShadow: '0 0 10px rgba(245, 158, 11, 0.35)',
+              flexShrink: 0
+            }}
+          />
+          <h1
+            style={{
+              fontSize: '1.02rem',
+              fontWeight: 800,
+              margin: 0,
+              letterSpacing: '-0.02em',
+              color: '#fff',
+              lineHeight: 1
             }}
           >
-            <i className="bi bi-stopwatch-fill" style={{ fontSize: '1rem' }} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', color: '#fff' }}>
-              Metrônomo <span style={{ color: '#f59e0b', fontSize: '0.78rem', fontWeight: 600, border: '1px solid rgba(245, 158, 11, 0.3)', padding: '1px 6px', borderRadius: '4px', marginLeft: '4px' }}>Maelzel & Digital</span>
-            </h1>
-          </div>
+            Metrônomo
+          </h1>
         </div>
 
-        {/* Header Right: Shortcuts (visible on tablet and desktop) */}
-        {!device.isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Right (final da div): Maelzel & Digital, Seletor de Tema e Atalhos */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              color: 'var(--accent-color, #f59e0b)',
+              background: 'rgba(245, 158, 11, 0.1)',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+              padding: '2px 8px',
+              borderRadius: '6px',
+              letterSpacing: '0.3px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Maelzel & Digital
+          </span>
+
+          {/* Theme Selector Button */}
+          <button
+            type="button"
+            onClick={() => setIsThemeModalOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '6px',
+              padding: '3px 8px',
+              color: 'var(--colorB, #f3f4f6)',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            title="Alterar tema visual e cor do acabamento do metrônomo"
+          >
+            <i className="bi bi-palette-fill" style={{ color: 'var(--accent-color, #f59e0b)', fontSize: '0.85rem' }} />
+            <span style={{ display: device.isMobile ? 'none' : 'inline' }}>Tema</span>
+          </button>
+
+          {/* Header Right: Shortcuts (visible on desktop/tablet) */}
+          {!device.isMobile && (
             <span
               style={{
-                fontSize: '0.75rem',
-                color: 'var(--colorD)',
+                fontSize: '0.72rem',
+                color: 'var(--colorD, #9ca3af)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
                 background: 'rgba(255, 255, 255, 0.04)',
-                padding: '4px 8px',
+                padding: '2px 6px',
                 borderRadius: '6px',
                 border: '1px solid rgba(255, 255, 255, 0.06)'
               }}
               title="Atalhos: Espaço (Iniciar/Pausar), Setas (BPM), T (Tap Tempo)"
             >
               <i className="bi bi-keyboard" />
-              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Espaço</kbd>
-              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Setas</kbd>
-              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>T</kbd>
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 3px', borderRadius: '3px' }}>Espaço</kbd>
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 3px', borderRadius: '3px' }}>Setas</kbd>
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 3px', borderRadius: '3px' }}>T</kbd>
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </header>
 
       {/* Main App Content */}
-      <main style={{ flex: 1, padding: device.isMobile ? '0.5rem' : '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <main
+        style={{
+          flex: 1,
+          padding: device.isMobile ? '0.35rem' : '0.8rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
         <MetronomoTab
           bpm={metronome.bpm}
           setBpm={metronome.setBpm}
@@ -132,16 +212,24 @@ export const App: React.FC = () => {
       <footer
         style={{
           borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-          padding: '1rem',
+          padding: '0.6rem 1rem',
           textAlign: 'center',
-          fontSize: '0.78rem',
+          fontSize: '0.74rem',
           color: 'rgba(255, 255, 255, 0.45)'
         }}
       >
         Desenvolvido por <strong>Bruno Daher</strong> • Maelzel Mechanical & Digital Precision Web Audio API
       </footer>
+
+      {/* Theme Selection Modal */}
+      <ThemeModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+        currentThemeId={currentTheme.id}
+        onSelectTheme={handleSelectTheme}
+      />
     </div>
   );
 };
-export default App;
 
+export default App;
