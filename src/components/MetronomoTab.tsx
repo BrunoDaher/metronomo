@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiguraOption } from '../hooks/useMetronome';
+import { FiguraOption, TimeSignatureOption, TIME_SIGNATURES } from '../hooks/useMetronome';
 import { AnalogMetronome } from './AnalogMetronome';
 import coelhoImg from '../assets/icoApp.png';
 
@@ -8,6 +8,9 @@ interface MetronomoTabProps {
   setBpm: (val: number) => void;
   pulsos: number;
   setPulsos: (val: number) => void;
+  metric?: string;
+  setMetric?: (val: string) => void;
+  timeSignatures?: TimeSignatureOption[];
   figuraCount: number;
   setFiguraCount: (val: number) => void;
   isRunning: boolean;
@@ -16,8 +19,6 @@ interface MetronomoTabProps {
   activeSubdivision: { pulse: number; sub: number } | null;
   figuras: FiguraOption[];
   deviceType: 'mobile' | 'tablet' | 'desktop';
-  soundType?: 'wood' | 'beep';
-  setSoundType?: (val: 'wood' | 'beep') => void;
   bellEnabled?: boolean;
   setBellEnabled?: (val: boolean) => void;
   tapTempo?: () => void;
@@ -29,6 +30,9 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
   setBpm,
   pulsos,
   setPulsos,
+  metric = '4/4',
+  setMetric,
+  timeSignatures = TIME_SIGNATURES,
   figuraCount,
   setFiguraCount,
   isRunning,
@@ -37,14 +41,12 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
   activeSubdivision,
   figuras,
   deviceType,
-  soundType = 'wood',
-  setSoundType,
   bellEnabled = true,
   setBellEnabled,
   tapTempo,
   tempoName = 'Moderato'
 }) => {
-  const [viewMode, setViewMode] = useState<'analog' | 'digital'>('analog');
+  const [showSubdivisions, setShowSubdivisions] = useState<boolean>(false);
   const [tapActive, setTapActive] = useState<boolean>(false);
 
   const handleTap = () => {
@@ -59,83 +61,76 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
     setBpm(Math.max(30, Math.min(260, bpm + delta)));
   };
 
-  const presetTempos = [
-    { label: 'Largo', bpm: 60 },
-    { label: 'Andante', bpm: 80 },
-    { label: 'Moderato', bpm: 108 },
-    { label: 'Allegro', bpm: 128 },
-    { label: 'Vivace', bpm: 144 },
-    { label: 'Presto', bpm: 180 }
-  ];
-
   return (
     <div
       id="painelClock"
       className={`painel flexColBetween ${deviceType}`}
       style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%', maxWidth: '960px', margin: '0 auto' }}
     >
-      {/* Top Bar: View Mode Switcher & Global Power */}
+      {/* Top Bar: Subdivisões Switcher & Title */}
       <div className="metro-header comp">
         <div className="metro-title flexrow itemCenter gap1">
           <img
             src={coelhoImg}
             alt="Coelho"
             style={{
-              width: '24px',
-              height: '24px',
+              width: '26px',
+              height: '26px',
               borderRadius: '50%',
               objectFit: 'cover',
               border: '1.5px solid var(--accent-color, #f59e0b)'
             }}
           />
           <div className="flexcol">
-
-            <span className="metro-tempo-badge-text">{tempoName} • {bpm} BPM</span>
+            <span className="metro-heading">Metrônomo</span>
+            <span className="metro-tempo-badge-text">
+              {showSubdivisions ? 'Verificação de Subdivisões' : `${tempoName} • ${bpm} BPM`}
+            </span>
           </div>
         </div>
 
-        {/* View Mode Switcher: Analog or Digital */}
-        <div className="metro-view-modes flexrow gap1" role="tablist">
-          <button
-            type="button"
-            className={`metro-view-btn ${viewMode === 'analog' ? 'active' : ''}`}
-            onClick={() => setViewMode('analog')}
-            title="Exibir Metrônomo Analógico Mecânico"
-          >
-            <i className="bi bi-hourglass-split" /> <span className="view-btn-text">Analógico</span>
-          </button>
-          <button
-            type="button"
-            className={`metro-view-btn ${viewMode === 'digital' ? 'active' : ''}`}
-            onClick={() => setViewMode('digital')}
-            title="Exibir Controles Digitais"
-          >
-            <i className="bi bi-cpu" /> <span className="view-btn-text">Digital</span>
-          </button>
-        </div>
-
-        {/* Switch Toggle */}
-        <label
-          htmlFor="metroToggle"
-          className="switch"
-          title={isRunning ? 'Metrônomo Ligado (Clique para Desligar)' : 'Metrônomo Desligado (Clique para Ligar)'}
+        {/* Chave (Toggle Switch) para trocar para tela de Subdivisões */}
+        <div
+          className="flexrow itemCenter gap1"
+          style={{ cursor: 'pointer', userSelect: 'none' }}
+          onClick={() => setShowSubdivisions((prev) => !prev)}
+          title={showSubdivisions ? 'Voltar para o Metrônomo Analógico' : 'Abrir tela de Subdivisões e Compassos'}
         >
-          <input
-            type="checkbox"
-            id="metroToggle"
-            checked={isRunning}
-            onChange={onToggle}
-            aria-label="Ligar ou desligar metrônomo"
-          />
-          <span className="slider round" />
-        </label>
+          <span
+            style={{
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              color: showSubdivisions ? 'var(--accent-color, #f59e0b)' : 'var(--colorD, #9ca3af)',
+              transition: 'color 0.2s ease',
+              letterSpacing: '0.3px'
+            }}
+          >
+            Subdivisões
+          </span>
+
+          <label
+            htmlFor="subdivToggle"
+            className="switch metro-switch"
+            style={{ margin: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              id="subdivToggle"
+              checked={showSubdivisions}
+              onChange={(e) => setShowSubdivisions(e.target.checked)}
+              aria-label="Alternar para tela de subdivisões"
+            />
+            <span className="slider round" />
+          </label>
+        </div>
       </div>
 
-      {/* Main Container: Single View (Analog OR Digital) */}
-      <div className={`metro-content-container view-${viewMode} w-100`}>
-        {/* ANALOG METRONOME */}
-        {viewMode === 'analog' && (
-          <section className="metro-analog-section flexColCenter">
+      {/* Main Container: Metrônomo Analógico OU Verificação de Subdivisões */}
+      <div className="metro-content-container w-100">
+        {/* TELA 1: METRÔNOMO ANALÓGICO (Padrão) */}
+        {!showSubdivisions && (
+          <section className="metro-analog-section flexColCenter w-100">
             <AnalogMetronome
               bpm={bpm}
               isRunning={isRunning}
@@ -149,121 +144,148 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
           </section>
         )}
 
-        {/* DIGITAL CONTROLS */}
-        {viewMode === 'digital' && (
+        {/* TELA 2: VERIFICAÇÃO DE SUBDIVISÕES E COMPASSOS */}
+        {showSubdivisions && (
           <section className="metro-digital-section flexcol gap1 w-100">
-            {/* Hero Bar: Toggle Sino/Madeira & Tap Tempo */}
-            <article className="comp bgDark p-1 flexrow justCenter itemCenter gap2 flexWrap">
-              {/* Chave toggle que altera entre Madeira e Sino */}
-              <div
-                className="metro-sound-toggle-group flexrow itemCenter gap1 p-1"
-                title="Alternar entre Madeira e Sino no 1º tempo"
-              >
-                <span
-                  className={`toggle-label ${!bellEnabled ? 'active' : ''}`}
-                  onClick={() => setBellEnabled?.(false)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <i className="bi bi-tree-fill" /> Wood
-                </span>
-
-                <label className="switch metro-switch" htmlFor="sinoToggle" title="Alternar entre Madeira e Sino no 1º tempo">
-                  <input
-                    type="checkbox"
-                    id="sinoToggle"
-                    checked={bellEnabled}
-                    onChange={(e) => setBellEnabled?.(e.target.checked)}
-                  />
-                  <span className="slider round" />
-                </label>
-
-                <span
-                  className={`toggle-label ${bellEnabled ? 'active' : ''}`}
-                  onClick={() => setBellEnabled?.(true)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <i className="bi bi-bell-fill" /> Sino
-                </span>
-              </div>
-
-              {/* Sound Type: Wood vs Beep */}
-              {setSoundType && (
-                <div className="metro-sound-toggle-group flexrow itemCenter gap1 p-1">
-                  <button
-                    type="button"
-                    className={`metro-view-btn ${soundType === 'wood' ? 'active' : ''}`}
-                    onClick={() => setSoundType('wood')}
-                    title="Som Acústico de Bloco de Madeira"
-                  >
-                    Madeira
-                  </button>
-                  <button
-                    type="button"
-                    className={`metro-view-btn ${soundType === 'beep' ? 'active' : ''}`}
-                    onClick={() => setSoundType('beep')}
-                    title="Som Digital Sintetizado"
-                  >
-                    Beep
-                  </button>
-                </div>
-              )}
-
+            {/* Control Bar: Play/Pause, BPM Adjustment, and Finger-Friendly Tap Tempo */}
+            <article className="comp bgDark p-1 flexrow justContBetween itemCenter gap2 flexWrap">
+              {/* Play / Pause Button */}
               <button
                 type="button"
-                className={`metro-tap-tempo-btn border0 flexrow itemCenter gap1 ${tapActive ? 'active' : ''}`}
-                onClick={handleTap}
-                title="Clique no ritmo desejado para detectar o andamento"
+                className={`metro-analog-btn ${isRunning ? 'active' : ''}`}
+                onClick={onToggle}
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  fontSize: '1.4rem',
+                  borderRadius: '12px',
+                  flexShrink: 0
+                }}
+                title={isRunning ? 'Pausar Metrônomo' : 'Iniciar Metrônomo'}
               >
-                <i className="bi bi-hand-index-thumb-fill" />
+                <i className={`bi ${isRunning ? 'bi-pause-fill' : 'bi-play-fill'}`} />
+              </button>
+
+              {/* BPM Adjuster Steppers */}
+              <div className="flexrow itemCenter gap1">
+                <button
+                  type="button"
+                  className="metro-step-btn"
+                  style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                  onClick={() => adjustBpm(-5)}
+                  title="-5 BPM"
+                >
+                  -5
+                </button>
+                <button
+                  type="button"
+                  className="metro-step-btn"
+                  style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                  onClick={() => adjustBpm(-1)}
+                  title="-1 BPM"
+                >
+                  -1
+                </button>
+                <div style={{ textAlign: 'center', minWidth: '70px' }}>
+                  <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#fff', lineHeight: 1 }}>{bpm}</div>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-color, #f59e0b)' }}>BPM</div>
+                </div>
+                <button
+                  type="button"
+                  className="metro-step-btn"
+                  style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                  onClick={() => adjustBpm(+1)}
+                  title="+1 BPM"
+                >
+                  +1
+                </button>
+                <button
+                  type="button"
+                  className="metro-step-btn"
+                  style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                  onClick={() => adjustBpm(+5)}
+                  title="+5 BPM"
+                >
+                  +5
+                </button>
+              </div>
+
+              {/* Large, Finger-Friendly Tap Tempo Pad */}
+              <button
+                type="button"
+                className={`metro-tap-tempo-pad ${tapActive ? 'active' : ''}`}
+                onClick={handleTap}
+                title="Toque com o dedo no ritmo desejado para detectar o andamento"
+              >
+                <i className="bi bi-hand-index-thumb-fill" style={{ fontSize: '1.3rem' }} />
                 <span>TAP TEMPO</span>
               </button>
             </article>
 
-            {/* Time Signature (Pulsos) & Subdivisions (Batidas) */}
-            <article className="bgDark comp flex gap2 justCenter p-1 rad">
-              {/* Compasso */}
-              <div className="metro-control-group gap1 flexcol">
-                <div className="flexrow itemCenter">
-                  <span className="card-header-label">Compassos</span>
+            {/* Compassos (Métricas) & Subdivisões Musicais */}
+            <article className="bgDark comp flexcol gap2 p-1 rad">
+              {/* 1. Métricas do Compasso (2/4, 3/4, 4/4, etc.) */}
+              <div className="metro-control-group flexcol gap1">
+                <div className="flexrow itemCenter justContBetween">
+                  <span className="card-header-label">
+                    <i className="bi bi-music-note-beamed" style={{ marginRight: '4px' }} />
+                    Métrica do Compasso
+                  </span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-color, #f59e0b)' }}>
+                    {metric} ({pulsos} tempos)
+                  </span>
                 </div>
-                <div className="metro-pulsos-btns flexrow justCenter w-100">
-                  {[1, 2, 3, 4, 6].map((p) => (
+                <div className="metro-pulsos-btns flexrow w-100 flexWrap gap1">
+                  {timeSignatures.map((ts) => (
                     <button
-                      key={p}
+                      key={ts.metric}
                       type="button"
-                      className={`compCount-btn flex1 ${pulsos === p ? 'active' : ''}`}
-                      onClick={() => setPulsos(p)}
-                      title={`${p} pulsos por compasso`}
+                      className={`metro-metric-btn ${metric === ts.metric ? 'active' : ''}`}
+                      onClick={() => {
+                        if (setMetric) setMetric(ts.metric);
+                        else setPulsos(ts.pulsos);
+                      }}
+                      title={`${ts.metric} - ${ts.label} (${ts.pulsos} tempos)`}
                     >
-                      {p === 6 ? '6/8' : `${p}`}
+                      <span>{ts.metric}</span>
+                      <span className="metro-metric-label">{ts.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Rhythmic Subdivisions (Batidas por tempo) */}
+              {/* 2. Subdivisões Rítmicas (Nomes Musicais Tradicionais) */}
               <div className="metro-control-group flexcol gap1">
-                <div className="flexrow itemCenter">
-                  <span className="card-header-label">Subdivisão</span>
+                <div className="flexrow itemCenter justContBetween">
+                  <span className="card-header-label">
+                    <i className="bi bi-soundwave" style={{ marginRight: '4px' }} />
+                    Subdivisão Rítmica
+                  </span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--colorC, #38bdf8)' }}>
+                    {figuras.find((f) => f.value === figuraCount)?.name || 'Semínima'} ({figuraCount}x por tempo)
+                  </span>
                 </div>
-                <div className="metro-figuras-grid flexrow w-100" id="figuraBtns">
+                <div className="metro-figuras-grid flexrow w-100 flexWrap gap1" id="figuraBtns">
                   {figuras.map((fig) => (
                     <button
                       key={fig.value}
                       type="button"
-                      className={`figura-btn figritm flex1 ${figuraCount === fig.value ? 'active' : ''}`}
-                      title={`${fig.title} (${fig.value}x)`}
+                      className={`metro-subdiv-btn ${figuraCount === fig.value ? 'active' : ''}`}
+                      title={`${fig.name}: ${fig.description} (${fig.value} batidas por tempo)`}
                       onClick={() => setFiguraCount(fig.value)}
                     >
-                      {fig.text}
+                      <span className="metro-subdiv-name">{fig.name}</span>
+                      <span className="metro-subdiv-meta">
+                        {fig.symbol} • {fig.value}x
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
             </article>
 
-            {/* Dynamic Beats & Subdivisions Visualizer */}
-            <section id="compasso" className="compasso p-1 flex gap1 justCenter">
+            {/* Visualizador Dinâmico de Batidas e Subdivisões */}
+            <section id="compasso" className="compasso p-1 flex gap1 justCenter flexWrap">
               {Array.from({ length: pulsos }).map((_, idx) => {
                 const p = idx + 1;
                 const isCurrentPulse = isRunning && currentPulse === p;
@@ -273,23 +295,21 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
                   <div
                     key={p}
                     id={`p${p}`}
-                    className={`metro-pulse-card flexColBetween ${isCurrentPulse ? 'active-beat' : ''
-                      } ${isDownbeat ? 'downbeat' : ''}`}
+                    className={`metro-pulse-card flexColBetween ${
+                      isCurrentPulse ? 'active-beat' : ''
+                    } ${isDownbeat ? 'downbeat' : ''}`}
                   >
                     {/* Header Lamp */}
                     <div className="pulse-lamp-header flexrow itemCenter justContBetween">
                       <span className="pulse-number">
-                        {isDownbeat ? <i className="bi bi-star-fill text-gold" /> : null}
+                        {isDownbeat ? <i className="bi bi-star-fill text-gold" style={{ marginRight: '3px' }} /> : null}
                         {p}
                       </span>
                       <div className={`pulse-lamp-dot ${isCurrentPulse ? 'active' : ''}`} />
                     </div>
 
                     {/* Subdivisions Bars */}
-                    <div
-                      className="pulse-subs-container w-100"
-                      data-divisions={figuraCount}
-                    >
+                    <div className="pulse-subs-container w-100" data-divisions={figuraCount}>
                       {Array.from({ length: figuraCount }).map((_, j) => {
                         const isSubActive =
                           isRunning &&
@@ -314,63 +334,6 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
           </section>
         )}
       </div>
-
-      {/* Quick BPM Controls & Preset Bar (visible only in digital mode) */}
-      {viewMode === 'digital' && (
-        <div className="comp p-2 flexrow justContBetween itemCenter flexWrap gap1" style={{ background: 'var(--fundoE)', borderRadius: '8px' }}>
-          <div className="flexrow itemCenter gap1">
-            <button
-              type="button"
-              className="metro-step-btn"
-              onClick={() => adjustBpm(-5)}
-              title="-5 BPM"
-            >
-              -5
-            </button>
-            <button
-              type="button"
-              className="metro-step-btn"
-              onClick={() => adjustBpm(-1)}
-              title="-1 BPM"
-            >
-              -1
-            </button>
-            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--colorB)', minWidth: '80px', textAlign: 'center' }}>
-              {bpm} <small style={{ fontSize: '0.7rem', color: 'var(--colorD)', fontWeight: 600 }}>BPM</small>
-            </span>
-            <button
-              type="button"
-              className="metro-step-btn"
-              onClick={() => adjustBpm(+1)}
-              title="+1 BPM"
-            >
-              +1
-            </button>
-            <button
-              type="button"
-              className="metro-step-btn"
-              onClick={() => adjustBpm(+5)}
-              title="+5 BPM"
-            >
-              +5
-            </button>
-          </div>
-
-          <div className="flexrow itemCenter gap1 flexWrap">
-            {presetTempos.map((pt) => (
-              <button
-                key={pt.label}
-                type="button"
-                className={`preset-tempo-pill ${bpm === pt.bpm ? 'active' : ''}`}
-                onClick={() => setBpm(pt.bpm)}
-              >
-                {pt.label} ({pt.bpm})
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
-

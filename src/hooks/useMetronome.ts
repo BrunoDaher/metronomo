@@ -2,16 +2,33 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export interface FiguraOption {
   value: number;
-  title: string;
-  text: string;
+  name: string;
+  symbol: string;
+  description: string;
 }
 
 export const FIGURAS: FiguraOption[] = [
-  { value: 1, title: 'Semínima', text: ')' },
-  { value: 2, title: 'Colcheia', text: '))' },
-  { value: 3, title: 'Semicolcheia', text: ')))' },
-  { value: 4, title: 'Fusa', text: '))))' },
-  { value: 5, title: 'Semifusa', text: ')))))' }
+  { value: 1, name: 'Semínima', symbol: '♩', description: '1 por tempo' },
+  { value: 2, name: 'Colcheia', symbol: '♫', description: '2 por tempo' },
+  { value: 3, name: 'Tercina', symbol: '³♫', description: '3 por tempo' },
+  { value: 4, name: 'Semicolcheia', symbol: '♬', description: '4 por tempo' },
+  { value: 6, name: 'Sextina', symbol: '⁶♬', description: '6 por tempo' }
+];
+
+export interface TimeSignatureOption {
+  metric: string;
+  pulsos: number;
+  label: string;
+}
+
+export const TIME_SIGNATURES: TimeSignatureOption[] = [
+  { metric: '2/4', pulsos: 2, label: 'Binário' },
+  { metric: '3/4', pulsos: 3, label: 'Ternário' },
+  { metric: '4/4', pulsos: 4, label: 'Quaternário' },
+  { metric: '5/4', pulsos: 5, label: 'Quinário' },
+  { metric: '6/8', pulsos: 6, label: 'Composto' },
+  { metric: '7/8', pulsos: 7, label: 'Setenário' },
+  { metric: '12/8', pulsos: 12, label: 'Quat. Composto' }
 ];
 
 export function getTempoName(bpm: number): string {
@@ -41,88 +58,86 @@ export function getMetronomeAudioContext(): AudioContext {
 
 export function useMetronome() {
   const [bpm, setBpm] = useState<number>(120);
-  const [pulsos, setPulsos] = useState<number>(4);
+  const [pulsos, setPulsosState] = useState<number>(4);
+  const [metric, setMetricState] = useState<string>('4/4');
   const [figuraCount, setFiguraCount] = useState<number>(1);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [currentPulse, setCurrentPulse] = useState<number>(1);
   const [activeSubdivision, setActiveSubdivision] = useState<{ pulse: number; sub: number } | null>(null);
-  const [soundType, setSoundType] = useState<'wood' | 'beep'>('wood');
   const [bellEnabled, setBellEnabled] = useState<boolean>(true);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseIndexRef = useRef<number>(1);
   const tapTimesRef = useRef<number[]>([]);
 
-  // Sound synthesis for authentic acoustic wood click & bell or digital beep
+  const setMetric = useCallback((m: string) => {
+    setMetricState(m);
+    const found = TIME_SIGNATURES.find((ts) => ts.metric === m);
+    if (found) {
+      setPulsosState(found.pulsos);
+    }
+  }, []);
+
+  const setPulsos = useCallback((p: number) => {
+    setPulsosState(p);
+    const found = TIME_SIGNATURES.find((ts) => ts.pulsos === p);
+    if (found) {
+      setMetricState(found.metric);
+    }
+  }, []);
+
+  // Standard Acoustic Woodblock Click (Padrão Madeira & Finish, sem beep)
   const playClick = useCallback(
     (isDownbeat: boolean) => {
       try {
         const ctx = getMetronomeAudioContext();
         const now = ctx.currentTime;
 
-        if (soundType === 'wood') {
-          // Acoustic Woodblock / Mechanical Metronome Click
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const filter = ctx.createBiquadFilter();
+        // Acoustic Woodblock / Mechanical Metronome Click
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
 
-          filter.type = 'bandpass';
-          filter.frequency.value = isDownbeat ? 1800 : 1200;
-          filter.Q.value = 5;
+        filter.type = 'bandpass';
+        filter.frequency.value = isDownbeat ? 1900 : 1300;
+        filter.Q.value = 5.5;
 
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(isDownbeat ? 1400 : 900, now);
-          osc.frequency.exponentialRampToValueAtTime(isDownbeat ? 500 : 350, now + 0.035);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(isDownbeat ? 1450 : 950, now);
+        osc.frequency.exponentialRampToValueAtTime(isDownbeat ? 480 : 340, now + 0.035);
 
-          gain.gain.setValueAtTime(0.75, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(ctx.destination);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
 
-          osc.start(now);
-          osc.stop(now + 0.045);
+        osc.start(now);
+        osc.stop(now + 0.045);
 
-          // Downbeat bell chime
-          if (isDownbeat && bellEnabled) {
-            const bellOsc = ctx.createOscillator();
-            const bellGain = ctx.createGain();
+        // Downbeat bell chime (enabled only if bell toggle is on)
+        if (isDownbeat && bellEnabled) {
+          const bellOsc = ctx.createOscillator();
+          const bellGain = ctx.createGain();
 
-            bellOsc.type = 'sine';
-            bellOsc.frequency.value = 2400;
+          bellOsc.type = 'sine';
+          bellOsc.frequency.value = 2400;
 
-            bellGain.gain.setValueAtTime(0.2, now);
-            bellGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+          bellGain.gain.setValueAtTime(0.2, now);
+          bellGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
 
-            bellOsc.connect(bellGain);
-            bellGain.connect(ctx.destination);
+          bellOsc.connect(bellGain);
+          bellGain.connect(ctx.destination);
 
-            bellOsc.start(now);
-            bellOsc.stop(now + 0.15);
-          }
-        } else {
-          // Electronic beep
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = 'triangle';
-          osc.frequency.value = isDownbeat ? 1200 : 800;
-
-          gain.gain.setValueAtTime(0.5, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(now);
-          osc.stop(now + 0.05);
+          bellOsc.start(now);
+          bellOsc.stop(now + 0.15);
         }
       } catch {
-        // Audio might be blocked until user gesture
+        // Audio might be blocked until user interaction
       }
     },
-    [soundType, bellEnabled]
+    [bellEnabled]
   );
 
   const tick = useCallback(() => {
@@ -191,6 +206,9 @@ export function useMetronome() {
     setBpm,
     pulsos,
     setPulsos,
+    metric,
+    setMetric,
+    timeSignatures: TIME_SIGNATURES,
     figuraCount,
     setFiguraCount,
     isRunning,
@@ -198,8 +216,6 @@ export function useMetronome() {
     currentPulse,
     activeSubdivision,
     figuras: FIGURAS,
-    soundType,
-    setSoundType,
     bellEnabled,
     setBellEnabled,
     tapTempo,

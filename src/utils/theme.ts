@@ -208,3 +208,4 @@ export function saveTheme(themeId: string): void {
     localStorage.setItem('metronome_theme', themeId);
   }
 }
+

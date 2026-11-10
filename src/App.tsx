@@ -191,6 +191,9 @@ export const App: React.FC = () => {
           setBpm={metronome.setBpm}
           pulsos={metronome.pulsos}
           setPulsos={metronome.setPulsos}
+          metric={metronome.metric}
+          setMetric={metronome.setMetric}
+          timeSignatures={metronome.timeSignatures}
           figuraCount={metronome.figuraCount}
           setFiguraCount={metronome.setFiguraCount}
           isRunning={metronome.isRunning}
@@ -199,8 +202,6 @@ export const App: React.FC = () => {
           activeSubdivision={metronome.activeSubdivision}
           figuras={metronome.figuras}
           deviceType={device.deviceType}
-          soundType={metronome.soundType}
-          setSoundType={metronome.setSoundType}
           bellEnabled={metronome.bellEnabled}
           setBellEnabled={metronome.setBellEnabled}
           tapTempo={metronome.tapTempo}

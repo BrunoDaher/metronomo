@@ -137,11 +137,7 @@ body {
   border-radius: 8px;
 }
 
-.comp {
-  background: var(--fundoE);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
+.comp {}
 
 .bgDark {
   background: var(--fundoD);
@@ -491,13 +487,7 @@ input:checked+.slider:before {
 .case-dial {
   position: relative;
   flex: 1;
-  margin: 6px 10px 4px 10px;
-  background: var(--metro-dial-bg, linear-gradient(180deg, #1f1b16 0%, #2a241d 50%, #181512 100%));
-  border-radius: 6px;
-  box-shadow:
-    inset 0 3px 12px rgba(0, 0, 0, 0.85),
-    0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--metro-dial-border, #4a3825);
+
   cursor: pointer;
   overflow: hidden;
 }
@@ -1038,6 +1028,122 @@ input:checked+.slider:before {
 .metro-main-play-btn.running {
   background: linear-gradient(135deg, #c82333, #dc3545);
   box-shadow: 0 0 14px rgba(220, 53, 69, 0.6);
+}
+
+/* Large Finger-Friendly Tap Tempo Pad */
+.metro-tap-tempo-pad {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 2px solid var(--accent-color, #f59e0b);
+  color: #fff;
+  min-height: 56px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: all 0.12s ease;
+  user-select: none;
+  touch-action: manipulation;
+  flex: 1;
+}
+
+.metro-tap-tempo-pad:hover {
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.08));
+  transform: translateY(-1px);
+}
+
+.metro-tap-tempo-pad.active,
+.metro-tap-tempo-pad:active {
+  background: var(--accent-color, #f59e0b) !important;
+  color: #000 !important;
+  transform: scale(0.96);
+  box-shadow: 0 0 20px var(--accent-color, #f59e0b);
+}
+
+/* Metric Compassos Buttons */
+.metro-metric-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--colorB);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 48px;
+}
+
+.metro-metric-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.metro-metric-btn.active {
+  background: var(--accent-color, #f59e0b);
+  color: #000;
+  border-color: var(--accent-color, #f59e0b);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+}
+
+.metro-metric-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+/* Subdivisões Musicais Buttons */
+.metro-subdiv-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--colorB);
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 72px;
+}
+
+.metro-subdiv-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.metro-subdiv-btn.active {
+  background: var(--colorC, #38bdf8);
+  color: #000;
+  border-color: var(--colorC, #38bdf8);
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.4);
+}
+
+.metro-subdiv-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.metro-subdiv-meta {
+  font-size: 0.68rem;
+  font-weight: 600;
+  opacity: 0.85;
 }
 
 /* Tap Tempo Button */
