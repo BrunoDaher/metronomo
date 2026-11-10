@@ -93,8 +93,8 @@ export const AnalogMetronome: React.FC<AnalogMetronomeProps> = ({
       <div className="analog-metronome-case">
         {/* Top Cap */}
         <div className="case-top-cap">
-          <span className="case-brand">VIRTUAGUITAR</span>
-          <span className="case-subtext">MAELZEL SYSTEM</span>
+          <span className="case-brand">MAELZEL</span>
+          <span className="case-subtext">PRECISION SYSTEM</span>
         </div>
 
         {/* Dial Scale Background */}

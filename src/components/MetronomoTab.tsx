@@ -74,7 +74,7 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
       style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%', maxWidth: '960px', margin: '0 auto' }}
     >
       {/* Top Bar: View Mode Switcher & Global Power */}
-      <div className="metro-header comp p-2 flexrow justContBetween itemCenter">
+      <div className={`metro-header comp ${deviceType === 'mobile' ? 'p-1' : 'p-2'}`}>
         <div className="metro-title flexrow itemCenter gap1">
           <i className="bi bi-clock-history colorA f3vh" />
           <div className="flexcol">
@@ -124,7 +124,7 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
       <div className={`metro-content-container view-${viewMode} w-100`}>
         {/* ANALOG METRONOME */}
         {viewMode === 'analog' && (
-          <section className="metro-analog-section comp flexColCenter p-2">
+          <section className={`metro-analog-section comp flexColCenter ${deviceType === 'mobile' ? 'p-1' : 'p-2'}`}>
             <AnalogMetronome
               bpm={bpm}
               isRunning={isRunning}
@@ -304,59 +304,61 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
         )}
       </div>
 
-      {/* Quick BPM Controls & Preset Bar */}
-      <div className="comp p-2 flexrow justContBetween itemCenter flexWrap gap1" style={{ background: 'var(--fundoE)', borderRadius: '8px' }}>
-        <div className="flexrow itemCenter gap1">
-          <button
-            type="button"
-            className="metro-step-btn"
-            onClick={() => adjustBpm(-5)}
-            title="-5 BPM"
-          >
-            -5
-          </button>
-          <button
-            type="button"
-            className="metro-step-btn"
-            onClick={() => adjustBpm(-1)}
-            title="-1 BPM"
-          >
-            -1
-          </button>
-          <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--colorB)', minWidth: '80px', textAlign: 'center' }}>
-            {bpm} <small style={{ fontSize: '0.7rem', color: 'var(--colorD)', fontWeight: 600 }}>BPM</small>
-          </span>
-          <button
-            type="button"
-            className="metro-step-btn"
-            onClick={() => adjustBpm(+1)}
-            title="+1 BPM"
-          >
-            +1
-          </button>
-          <button
-            type="button"
-            className="metro-step-btn"
-            onClick={() => adjustBpm(+5)}
-            title="+5 BPM"
-          >
-            +5
-          </button>
-        </div>
-
-        <div className="flexrow itemCenter gap1 flexWrap">
-          {presetTempos.map((pt) => (
+      {/* Quick BPM Controls & Preset Bar (visible only in digital mode) */}
+      {viewMode === 'digital' && (
+        <div className="comp p-2 flexrow justContBetween itemCenter flexWrap gap1" style={{ background: 'var(--fundoE)', borderRadius: '8px' }}>
+          <div className="flexrow itemCenter gap1">
             <button
-              key={pt.label}
               type="button"
-              className={`preset-tempo-pill ${bpm === pt.bpm ? 'active' : ''}`}
-              onClick={() => setBpm(pt.bpm)}
+              className="metro-step-btn"
+              onClick={() => adjustBpm(-5)}
+              title="-5 BPM"
             >
-              {pt.label} ({pt.bpm})
+              -5
             </button>
-          ))}
+            <button
+              type="button"
+              className="metro-step-btn"
+              onClick={() => adjustBpm(-1)}
+              title="-1 BPM"
+            >
+              -1
+            </button>
+            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--colorB)', minWidth: '80px', textAlign: 'center' }}>
+              {bpm} <small style={{ fontSize: '0.7rem', color: 'var(--colorD)', fontWeight: 600 }}>BPM</small>
+            </span>
+            <button
+              type="button"
+              className="metro-step-btn"
+              onClick={() => adjustBpm(+1)}
+              title="+1 BPM"
+            >
+              +1
+            </button>
+            <button
+              type="button"
+              className="metro-step-btn"
+              onClick={() => adjustBpm(+5)}
+              title="+5 BPM"
+            >
+              +5
+            </button>
+          </div>
+
+          <div className="flexrow itemCenter gap1 flexWrap">
+            {presetTempos.map((pt) => (
+              <button
+                key={pt.label}
+                type="button"
+                className={`preset-tempo-pill ${bpm === pt.bpm ? 'active' : ''}`}
+                onClick={() => setBpm(pt.bpm)}
+              >
+                {pt.label} ({pt.bpm})
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

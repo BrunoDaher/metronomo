@@ -23,6 +23,11 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-color: #0b0c0e;
   color: var(--colorB);
@@ -163,6 +168,13 @@ input:checked + .slider:before {
   scrollbar-width: thin;
   scrollbar-color: var(--colorA) var(--fundoD);
   padding: 1rem;
+  width: 100%;
+}
+
+@media (max-width: 599px) {
+  #painelClock {
+    padding: 0.25rem 0;
+  }
 }
 
 #painelClock::-webkit-scrollbar {
@@ -182,12 +194,47 @@ input:checked + .slider:before {
 .metro-header {
   position: sticky;
   top: 0;
-  border-radius: 5px;
+  border-radius: 8px;
   z-index: 15;
   background-color: var(--fundoE);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 8px 12px;
+  gap: 0.5rem;
+}
+
+@media (max-width: 599px) {
+  .metro-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.65rem !important;
+    gap: 0.4rem;
+  }
+
+  .metro-title {
+    flex: 1 1 auto;
+  }
+
+  .metro-view-modes {
+    order: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .metro-view-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
 }
 
 .metro-heading {
@@ -296,8 +343,8 @@ input:checked + .slider:before {
 .analog-metronome-case {
   position: relative;
   width: 100%;
-  max-width: 245px;
-  height: 410px;
+  max-width: min(320px, 92vw);
+  height: clamp(470px, 68vh, 540px);
   background: linear-gradient(145deg, #3d2314 0%, #22120a 50%, #150a05 100%);
   border-radius: 12px 12px 8px 8px;
   box-shadow:
@@ -310,6 +357,7 @@ input:checked + .slider:before {
   overflow: hidden;
   user-select: none;
   touch-action: none;
+  transition: max-width 0.3s ease, height 0.3s ease;
 }
 
 /* Top Wood Cap with Engraved Brand */
@@ -382,16 +430,16 @@ input:checked + .slider:before {
 /* Left Column: Numbers */
 .scale-mark-left {
   position: absolute;
-  left: 8px;
-  width: 32px;
+  left: 6%;
+  width: 28%;
   text-align: right;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: rgba(223, 186, 98, 0.65);
+  color: rgba(223, 186, 98, 0.75);
   pointer-events: auto;
   cursor: pointer;
-  padding: 1px 2px;
+  padding: 1px 3px;
   border-radius: 3px;
   transition: all 0.15s ease;
   transform: translateY(-50%);
@@ -413,13 +461,13 @@ input:checked + .slider:before {
 /* Right Column: Names */
 .scale-mark-right {
   position: absolute;
-  right: 8px;
-  width: 66px;
+  left: 62%;
+  width: 35%;
   text-align: left;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  color: rgba(223, 186, 98, 0.65);
+  color: rgba(223, 186, 98, 0.75);
   pointer-events: auto;
   cursor: pointer;
   padding: 1px 3px;
@@ -662,6 +710,204 @@ input:checked + .slider:before {
 .tempo-label {
   font-size: 0.6rem;
   color: #a68c5b;
+}
+
+/* ==========================================================================
+   IPAD & TABLET RESPONSIVE TUNING (Music-stand clarity & touch friendliness)
+   ========================================================================== */
+@media (min-width: 600px) {
+  #painelClock {
+    max-width: 860px;
+  }
+
+  .metro-header {
+    padding: 1rem 1.4rem !important;
+  }
+
+  .metro-tempo-badge-text {
+    font-size: 1.12rem;
+  }
+
+  .metro-view-btn {
+    padding: 7px 16px;
+    font-size: 0.92rem;
+  }
+
+  .analog-metronome-case {
+    max-width: clamp(380px, 46vw, 440px);
+    height: clamp(600px, 72vh, 720px);
+    border-radius: 16px 16px 12px 12px;
+    border: 3px solid #6b4328;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.85),
+      inset 0 2px 4px rgba(255, 215, 0, 0.35),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.9);
+  }
+
+  /* Top Wood Cap on iPad */
+  .case-top-cap {
+    padding: 12px 16px 8px 16px;
+    border-bottom: 3px solid #6b4328;
+  }
+
+  .case-brand {
+    font-size: 1.15rem;
+    letter-spacing: 3.5px;
+    font-weight: 800;
+  }
+
+  .case-subtext {
+    font-size: 0.68rem;
+    letter-spacing: 2.2px;
+    margin-top: 3px;
+  }
+
+  /* Dial face on iPad */
+  .case-dial {
+    margin: 10px 16px 8px 16px;
+    border-radius: 8px;
+    border: 2px solid #4a3825;
+  }
+
+  .pendulum-groove {
+    width: 6px;
+    border-radius: 3px;
+  }
+
+  /* Scale markings on iPad - crisp and readable from afar */
+  .scale-mark-left {
+    left: 8%;
+    width: 25%;
+    font-size: 0.98rem;
+    font-weight: 800;
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
+  .scale-mark-right {
+    left: 60%;
+    width: 36%;
+    font-size: 0.94rem;
+    font-weight: 700;
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
+  /* Pendulum & Brass weight on iPad */
+  .pendulum-arm {
+    width: 6px;
+    margin-left: -3px;
+    border-radius: 3px;
+  }
+
+  .pendulum-weight {
+    width: 52px;
+    height: 38px;
+    border-radius: 6px;
+    border: 1.5px solid #7c611c;
+    box-shadow:
+      0 5px 14px rgba(0, 0, 0, 0.7),
+      inset 0 2px 2px rgba(255, 255, 255, 0.85),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .weight-indicator {
+    font-size: 0.92rem;
+    font-weight: 900;
+  }
+
+  .pendulum-tip {
+    width: 8px;
+    height: 8px;
+    top: -6px;
+  }
+
+  /* Base plate & controls on iPad */
+  .case-base {
+    padding: 12px 16px 14px 16px;
+    border-top: 3px solid #5a3821;
+  }
+
+  .case-pivot-mount {
+    width: 20px;
+    height: 20px;
+    top: -10px;
+  }
+
+  .case-bell-toggle {
+    padding: 6px 12px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .case-bell-label {
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+
+  .case-bell-toggle i {
+    font-size: 1.05rem !important;
+  }
+
+  .case-switch {
+    transform: scale(0.85);
+  }
+
+  .metro-analog-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  }
+
+  .tempo-bpm {
+    font-size: 1.25rem;
+  }
+
+  .tempo-bpm small {
+    font-size: 0.75rem;
+  }
+
+  .tempo-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+}
+
+/* Tablet / iPad Landscape tuning (prevent vertical clipping when screen height < 760px) */
+@media (min-width: 600px) and (orientation: landscape) and (max-height: 850px) {
+  .analog-metronome-case {
+    max-width: clamp(340px, 36vw, 400px);
+    height: clamp(480px, 68vh, 580px);
+  }
+
+  .case-top-cap {
+    padding: 8px 12px 5px 12px;
+  }
+
+  .case-brand {
+    font-size: 1rem;
+  }
+
+  .scale-mark-left,
+  .scale-mark-right {
+    font-size: 0.85rem;
+  }
+
+  .pendulum-weight {
+    width: 44px;
+    height: 32px;
+  }
+
+  .case-base {
+    padding: 8px 12px 10px 12px;
+  }
+
+  .metro-analog-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
 }
 
 /* ==========================================================================

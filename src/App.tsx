@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useMetronome } from './hooks/useMetronome';
+import { useDevice } from './hooks/useDevice';
 import { MetronomoTab } from './components/MetronomoTab';
 import './styles/metronomo.css';
 
 export const App: React.FC = () => {
   const metronome = useMetronome();
+  const device = useDevice();
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -76,56 +78,34 @@ export const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Header Right: Shortcuts & GitHub */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--colorD)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              padding: '4px 8px',
-              borderRadius: '6px',
-              border: '1px solid rgba(255, 255, 255, 0.06)'
-            }}
-            title="Atalhos: Espaço (Iniciar/Pausar), Setas (BPM), T (Tap Tempo)"
-          >
-            <i className="bi bi-keyboard" />
-            <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Espaço</kbd>
-            <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Setas</kbd>
-            <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>T</kbd>
-          </span>
-
-          <a
-            href="https://github.com/brunodaher/metronomo"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: 'var(--colorB)',
-              textDecoration: 'none',
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              padding: '5px 10px',
-              borderRadius: '6px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              transition: 'all 0.2s ease'
-            }}
-            title="Ver código-fonte no GitHub"
-          >
-            <i className="bi bi-github" style={{ fontSize: '1rem' }} />
-            <span>GitHub</span>
-          </a>
-        </div>
+        {/* Header Right: Shortcuts (visible on tablet and desktop) */}
+        {!device.isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--colorD)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.06)'
+              }}
+              title="Atalhos: Espaço (Iniciar/Pausar), Setas (BPM), T (Tap Tempo)"
+            >
+              <i className="bi bi-keyboard" />
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Espaço</kbd>
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>Setas</kbd>
+              <kbd style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1px 4px', borderRadius: '3px' }}>T</kbd>
+            </span>
+          </div>
+        )}
       </header>
 
       {/* Main App Content */}
-      <main style={{ flex: 1, padding: '1rem', display: 'flex', justifyContent: 'center' }}>
+      <main style={{ flex: 1, padding: device.isMobile ? '0.5rem' : '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <MetronomoTab
           bpm={metronome.bpm}
           setBpm={metronome.setBpm}
@@ -138,7 +118,7 @@ export const App: React.FC = () => {
           currentPulse={metronome.currentPulse}
           activeSubdivision={metronome.activeSubdivision}
           figuras={metronome.figuras}
-          deviceType="desktop"
+          deviceType={device.deviceType}
           soundType={metronome.soundType}
           setSoundType={metronome.setSoundType}
           bellEnabled={metronome.bellEnabled}
