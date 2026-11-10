@@ -360,3 +360,4 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
     </div>
   );
 };
+

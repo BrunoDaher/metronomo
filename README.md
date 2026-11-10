@@ -55,3 +55,4 @@ npm run build
 ---
 
 Desenvolvido por **[Bruno Daher](https://github.com/brunodaher)**.
+

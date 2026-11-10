@@ -93,103 +93,138 @@ export const AnalogMetronome: React.FC<AnalogMetronomeProps> = ({
       <div className="analog-metronome-case">
         {/* Top Cap */}
         <div className="case-top-cap">
-          <span className="case-brand">MAELZEL</span>
-          <span className="case-subtext">PRECISION SYSTEM</span>
+          <span className="case-brand">VIRTUAGUITAR</span>
+          <span className="case-subtext">MAELZEL SYSTEM</span>
         </div>
 
         {/* Dial Scale Background */}
         <div
           ref={dialRef}
-          className="case-dial-face"
+          className="case-dial"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          title="Clique ou arraste o peso dourado na haste para ajustar o andamento (BPM)"
+          onPointerCancel={handlePointerUp}
+          title="Clique ou arraste para ajustar o andamento (BPM)"
         >
-          {/* Dual Column Tempo Scale Markings */}
-          <div className="tempo-scale-container">
+          {/* Classical Dual-Column Tempo Markings */}
+          <div className="tempo-scale-labels">
+            {/* Left Column: BPM Numbers */}
             {TEMPO_SCALE_MARKS.map((mark) => {
-              const isCurrentRange = bpm >= mark.min && bpm <= mark.max;
+              const isActive = bpm >= mark.min && bpm <= mark.max;
               return (
-                <div
-                  key={mark.bpm}
-                  className={`scale-mark-row ${isCurrentRange ? 'active-range' : ''}`}
+                <span
+                  key={`num_${mark.bpm}`}
+                  className={`scale-mark-left ${isActive ? 'active' : ''}`}
                   style={{ top: mark.top }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onBpmChange?.(mark.bpm);
+                  }}
+                  title={`Definir andamento para ${mark.bpm} BPM (${mark.name})`}
                 >
-                  <span className="scale-bpm">{mark.bpm}</span>
-                  <div className="scale-notch" />
-                  <span className="scale-name">{mark.name}</span>
-                </div>
+                  {mark.bpm}
+                </span>
+              );
+            })}
+
+            {/* Right Column: Italian Tempo Names */}
+            {TEMPO_SCALE_MARKS.map((mark) => {
+              const isActive = bpm >= mark.min && bpm <= mark.max;
+              return (
+                <span
+                  key={`name_${mark.name}`}
+                  className={`scale-mark-right ${isActive ? 'active' : ''}`}
+                  style={{ top: mark.top }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onBpmChange?.(mark.bpm);
+                  }}
+                  title={`Definir andamento para ${mark.bpm} BPM (${mark.name})`}
+                >
+                  {mark.name}
+                </span>
               );
             })}
           </div>
 
-          {/* Center Pendulum Arm & Pivot Mechanism */}
-          <div className="pendulum-container">
-            <div
-              className={`pendulum-arm ${isRunning ? 'swinging' : 'at-rest'}`}
-              style={{
-                animationDuration: `${cycleDuration}s`,
-                animationPlayState: isRunning ? 'running' : 'paused'
-              }}
-            >
-              {/* Arm metal rod */}
-              <div className="pendulum-rod" />
+          {/* Central groove guide */}
+          <div className="pendulum-groove" />
 
+          {/* Oscillating Pendulum Assembly */}
+          <div
+            className={`pendulum-pivot ${isRunning ? 'running' : 'idle'}`}
+            style={{
+              animationDuration: `${cycleDuration}s`
+            }}
+          >
+            {/* Metal Arm */}
+            <div className="pendulum-arm">
               {/* Sliding Counterweight */}
               <div
                 className="pendulum-weight"
-                style={{ top: `${weightPercent}%` }}
+                style={{
+                  top: `${weightPercent}%`
+                }}
+                title={`${bpm} BPM - ${tempoName}`}
               >
-                <div className="weight-line" />
-                <span className="weight-bpm-tag">{bpm}</span>
+                <div className="weight-bezel" />
+                <span className="weight-indicator">{bpm}</span>
               </div>
-            </div>
 
-            {/* Bottom Pivot Base */}
-            <div className="pendulum-pivot-base" />
+              {/* Upper counter-tip */}
+              <div className="pendulum-tip" />
+            </div>
           </div>
         </div>
 
-        {/* Bottom Brass Faceplate & Controls */}
-        <div className="case-bottom-plate">
-          <div className="brass-screw left-screw" />
-          <div className="brass-screw right-screw" />
+        {/* Base with Bell / Wood Toggle Switch & Pivot mount */}
+        <div className="case-base">
+          <div className="case-pivot-mount" />
 
-          {/* Center Digital Readout */}
-          <div className="metronome-readout-cluster">
-            <div className="readout-label">TEMPO ATUAL</div>
-            <div className="readout-bpm-big">{bpm}</div>
-            <div className="readout-italian-name">{tempoName}</div>
-          </div>
-
-          {/* Quick Buttons: Toggle Bell & Power */}
-          <div className="case-actions-row">
-            <button
-              type="button"
-              className={`analog-tool-btn ${bellEnabled ? 'bell-active' : ''}`}
-              onClick={() => onToggleBell?.(!bellEnabled)}
-              title={bellEnabled ? 'Sino no 1º tempo ativado' : 'Sino desativado (Apenas madeira)'}
+          {/* Sino / Madeira toggle switch */}
+          {onToggleBell && (
+            <div
+              className={`case-bell-toggle ${bellEnabled ? 'mode-sino' : 'mode-madeira'} ${
+                isDownbeat && bellEnabled ? 'active-beat' : ''
+              }`}
+              title="Alternar entre Sino e Madeira no 1º tempo"
+              onClick={() => onToggleBell(!bellEnabled)}
+              style={{ cursor: 'pointer' }}
             >
-              <i className={`bi ${bellEnabled ? 'bi-bell-fill' : 'bi-bell-slash'}`} />
-              <span>{bellEnabled ? 'Sino 1º' : 'Mudo'}</span>
-            </button>
+              <i
+                className={`bi ${bellEnabled ? 'bi-bell-fill text-gold' : 'bi-tree-fill text-wood'}`}
+                style={{ fontSize: '0.82rem' }}
+              />
+              <span className="case-bell-label">{bellEnabled ? 'Sino' : 'Madeira'}</span>
+              <label className="switch case-switch" onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="checkbox"
+                  checked={bellEnabled}
+                  onChange={(e) => onToggleBell(e.target.checked)}
+                />
+                <span className="slider round" />
+              </label>
+            </div>
+          )}
 
+          {onToggle && (
             <button
               type="button"
-              className={`analog-play-btn ${isRunning ? 'running' : ''}`}
+              className={`metro-analog-btn ${isRunning ? 'active' : ''}`}
               onClick={onToggle}
-              title={isRunning ? 'Pausar Metrônomo (Espaço)' : 'Iniciar Metrônomo (Espaço)'}
+              title={isRunning ? 'Pausar Metrônomo' : 'Iniciar Metrônomo'}
             >
               <i className={`bi ${isRunning ? 'bi-pause-fill' : 'bi-play-fill'}`} />
-              <span>{isRunning ? 'PARAR' : 'INICIAR'}</span>
             </button>
+          )}
+
+          <div className="case-tempo-badge">
+            <span className="tempo-bpm">{bpm} <small>BPM</small></span>
+            <span className="tempo-label">{tempoName}</span>
           </div>
         </div>
       </div>
-
-      {/* Downbeat Visual Flash Indicator */}
-      <div className={`downbeat-flash-beacon ${isDownbeat ? 'flash' : ''}`} />
     </div>
   );
 };
