@@ -1,70 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metrônomo</title>    
-    <script src="js/jquery-1.9.1.js"></script>
-    <script src="js/audio.js"></script>
-    <link rel="stylesheet" href="css/slider.css">
-    <link rel="stylesheet" href="css/metronomo.css">    
-</head>
-
-
-
-<body style="background-color:black">
-    <fieldset class="p-2 bg-theme">
-        <legend class="bg-dark">Metronomo</legend>
-       
-        <div class='cardMaster font-center bg-dark'>            
-                
-                <div class="card bpm bg-dark p-2">
-                    <div class='card-header bg-dark' id='lbpm' for='bpm'>120 BPM</div>                     
-                    <input type="range" min="1" max="240" value="120" id="bpm"> 
-                      <div class='p-2'>
-                        <button id='metroOn' class="rad on">ON</button>
-                        <button id='metroOff' class="rad off active">Off</button>                                                                
-                    </div>
-                </div>               
-                
-                <div class='card p-2 bg-theme'>                
-                    <legend class='bg-dark p-2 txtWhite'>Pulsações</legend>                 
-                    <form class="bg-dark p-3 f140 txtWhite">                                           
-                        
-                        <!--
-                        <input type="radio" name="pulsos" value='1' >
-                        <label>1</label>
-                        <input type="radio"  name="pulsos" value='2'>
-                        <label>2</label>
-                        <input type="radio"  name="pulsos" value='3'>
-                        <label>3</label>
-                        <input type="radio"  name="pulsos" checked value='4'>
-                        <label>4</label>
-                        -->
-
-                        <div class="grid4">
-                            <a>1</a>
-                            <a>2</a>
-                            <a>3</a>
-                            <a>4</a>
-                        </div>
-                        <input id="qtdPulsos" type="range" min="1" max="4" value="4"> 
-
-                      </form>
-                </div>
-            
-            <div id="compasso" class="compasso rad">                    
-                <a id='p1' class="pulse">1</a>
-                <a id='p2' class="pulse">2</a>
-                <a id='p3' class="pulse">3</a>
-                <a id='p4' class="pulse">4</a>          
-            </div>  
-        </div>
-        </div>
-    </fieldset>
-    <script src="js/metronomo.js"></script>
-    <script src="js/audio.js"></script>
-</body>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23f59e0b'><path d='M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z'/><path d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z'/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121214" />
+    <meta name="description" content="Metrônomo Interativo de Alta Precisão - Maelzel Analógico Mecânico e Digital com Subdivisões e Tap Tempo" />
+    <title>Metrônomo | Maelzel System & Digital</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script type="module" crossorigin src="/metronomo/assets/index-BpQ9YJ7v.js"></script>
+    <link rel="stylesheet" crossorigin href="/metronomo/assets/index-DHELMYDj.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
-
-
