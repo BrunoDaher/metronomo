@@ -1,5 +1,5 @@
-import React, { useRef, useCallback } from 'react';
-import { getTempoName } from '../hooks/useMetronome';
+import React, { useRef, useCallback, useEffect } from 'react';
+import { getTempoName, getMetronomeAudioContext } from '../hooks/useMetronome';
 
 interface AnalogMetronomeProps {
   bpm: number;
@@ -10,6 +10,7 @@ interface AnalogMetronomeProps {
   bellEnabled?: boolean;
   onToggleBell?: (enabled: boolean) => void;
   deviceType?: 'mobile' | 'tablet' | 'desktop';
+  startAudioTime?: number;
 }
 
 const TEMPO_SCALE_MARKS = [
@@ -37,13 +38,45 @@ export const AnalogMetronome: React.FC<AnalogMetronomeProps> = ({
   onToggle,
   bellEnabled = true,
   onToggleBell,
-  deviceType = 'desktop'
+  deviceType = 'desktop',
+  startAudioTime = 0
 }) => {
   const dialRef = useRef<HTMLDivElement>(null);
+  const pivotRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef<boolean>(false);
 
-  // Period of full back-and-forth cycle (two beats)
-  const cycleDuration = (60 / bpm) * 2;
+  // Synchronized Harmonic Pendulum Animation via requestAnimationFrame and AudioContext.currentTime
+  useEffect(() => {
+    const pivot = pivotRef.current;
+    if (!pivot) return;
+
+    if (!isRunning) {
+      pivot.style.transform = 'rotate(0deg)';
+      return;
+    }
+
+    let animId: number;
+
+    const render = () => {
+      const ctx = getMetronomeAudioContext();
+      const now = ctx.currentTime;
+      const beatDuration = 60 / bpm;
+      const elapsed = now - (startAudioTime || 0);
+      const phase = (Math.PI * elapsed) / beatDuration;
+      // Apex (-22deg and +22deg) aligns with exact microsecond of audio clicks
+      const angle = -22 * Math.cos(phase);
+
+      pivot.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+      animId = requestAnimationFrame(render);
+    };
+
+    animId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      if (pivot) pivot.style.transform = 'rotate(0deg)';
+    };
+  }, [isRunning, bpm, startAudioTime]);
 
   // Weight position: In inverted pendulum, higher = slower (40 BPM ~ 14%), lower = faster (240 BPM ~ 88%)
   const clampedBpm = Math.max(40, Math.min(240, bpm));
@@ -153,10 +186,8 @@ export const AnalogMetronome: React.FC<AnalogMetronomeProps> = ({
 
           {/* Oscillating Pendulum Assembly */}
           <div
+            ref={pivotRef}
             className={`pendulum-pivot ${isRunning ? 'running' : 'idle'}`}
-            style={{
-              animationDuration: `${cycleDuration}s`
-            }}
           >
             {/* Metal Arm */}
             <div className="pendulum-arm">

@@ -181,6 +181,7 @@ export function useMetronome() {
   const [currentPulse, setCurrentPulse] = useState<number>(1);
   const [activeSubdivision, setActiveSubdivision] = useState<{ pulse: number; sub: number } | null>(null);
   const [bellEnabled, setBellEnabled] = useState<boolean>(true);
+  const [startAudioTime, setStartAudioTime] = useState<number>(0);
 
   // Synchronized state refs for audio lookahead scheduler
   const bpmRef = useRef<number>(bpm);
@@ -188,6 +189,8 @@ export function useMetronome() {
   const figuraCountRef = useRef<number>(figuraCount);
   const bellEnabledRef = useRef<boolean>(bellEnabled);
   const isRunningRef = useRef<boolean>(isRunning);
+  const startAudioTimeRef = useRef<number>(0);
+  const prevBpmRef = useRef<number>(bpm);
 
   bpmRef.current = bpm;
   pulsosRef.current = pulsos;
@@ -268,8 +271,14 @@ export function useMetronome() {
       const ctx = getMetronomeAudioContext();
       const currentAudioTime = ctx.currentTime;
 
+      // Small lead offset (10ms) perfectly aligns the V-Sync paint with physical speaker output
+      const renderLeadOffset = 0.010;
+
       let currentNote: { pulse: number; sub: number; time: number } | null = null;
-      while (notesInQueueRef.current.length > 0 && notesInQueueRef.current[0].time <= currentAudioTime) {
+      while (
+        notesInQueueRef.current.length > 0 &&
+        notesInQueueRef.current[0].time <= currentAudioTime + renderLeadOffset
+      ) {
         currentNote = notesInQueueRef.current.shift()!;
       }
 
@@ -277,7 +286,17 @@ export function useMetronome() {
         if (currentNote.sub === 0) {
           setCurrentPulse(currentNote.pulse);
         }
-        setActiveSubdivision({ pulse: currentNote.pulse, sub: currentNote.sub });
+        const activeItem = { pulse: currentNote.pulse, sub: currentNote.sub };
+        setActiveSubdivision(activeItem);
+
+        // Flash duration: 72% of subdivision interval for crisp, snappy pulses
+        const currentSubDurationMs =
+          ((60 / bpmRef.current) / Math.max(1, figuraCountRef.current)) * 1000;
+        setTimeout(() => {
+          setActiveSubdivision((prev) =>
+            prev?.pulse === activeItem.pulse && prev?.sub === activeItem.sub ? null : prev
+          );
+        }, currentSubDurationMs * 0.72);
       }
 
       animFrameRef.current = requestAnimationFrame(drawUI);
@@ -294,6 +313,21 @@ export function useMetronome() {
     };
   }, [isRunning]);
 
+  // Handle continuous smooth phase anchor when BPM changes while running
+  useEffect(() => {
+    if (isRunning && prevBpmRef.current !== bpm) {
+      const ctx = getMetronomeAudioContext();
+      const now = ctx.currentTime;
+      const oldT = 60 / prevBpmRef.current;
+      const newT = 60 / bpm;
+      const currentPhase = (Math.PI * (now - startAudioTimeRef.current)) / oldT;
+      const newStartTime = now - (currentPhase * newT) / Math.PI;
+      startAudioTimeRef.current = newStartTime;
+      setStartAudioTime(newStartTime);
+      prevBpmRef.current = bpm;
+    }
+  }, [bpm, isRunning]);
+
   // Main Metronome start/stop effect with lookahead timer
   useEffect(() => {
     if (isRunning) {
@@ -301,6 +335,9 @@ export function useMetronome() {
       pulseIndexRef.current = 1;
       subIndexRef.current = 0;
       nextNoteTimeRef.current = ctx.currentTime + 0.02;
+      startAudioTimeRef.current = nextNoteTimeRef.current;
+      setStartAudioTime(nextNoteTimeRef.current);
+      prevBpmRef.current = bpm;
       notesInQueueRef.current = [];
 
       scheduler();
@@ -428,6 +465,7 @@ export function useMetronome() {
     bellEnabled,
     setBellEnabled,
     tapTempo,
-    tempoName: getTempoName(bpm)
+    tempoName: getTempoName(bpm),
+    startAudioTime
   };
 }

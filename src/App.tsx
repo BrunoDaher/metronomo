@@ -210,6 +210,7 @@ export const App: React.FC = () => {
           tapTempo={metronome.tapTempo}
           tempoName={metronome.tempoName}
           isDigital={isDigital}
+          startAudioTime={metronome.startAudioTime}
         />
       </main>
 

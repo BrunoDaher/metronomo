@@ -579,7 +579,7 @@ input:checked+.slider:before {
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
 
-/* Oscillating Pendulum Mechanism */
+/* Oscillating Pendulum Mechanism (Audio-Clock Synchronized) */
 .pendulum-pivot {
   position: absolute;
   bottom: 16px;
@@ -589,29 +589,16 @@ input:checked+.slider:before {
   transform-origin: bottom center;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 
 .pendulum-pivot.idle {
   transform: rotate(0deg);
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .pendulum-pivot.running {
-  animation: pendulumHarmonicSwing infinite ease-in-out;
-}
-
-@keyframes pendulumHarmonicSwing {
-  0% {
-    transform: rotate(-22deg);
-  }
-
-  50% {
-    transform: rotate(22deg);
-  }
-
-  100% {
-    transform: rotate(-22deg);
-  }
+  transition: none !important;
 }
 
 /* Polished Brass Pendulum Rod */
@@ -721,9 +708,10 @@ input:checked+.slider:before {
 }
 
 .case-bell-toggle.active-beat {
-  border-color: #ffd700;
-  box-shadow: 0 0 10px #ffd700;
-  background: rgba(255, 215, 0, 0.2);
+  transition: none !important;
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 12px #ffd700 !important;
+  background: rgba(255, 215, 0, 0.25) !important;
 }
 
 .case-bell-label {
@@ -1521,7 +1509,7 @@ input:checked+.slider:before {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.15s ease;
+  transition: background-color 0.14s ease-out, border-color 0.14s ease-out, box-shadow 0.14s ease-out, transform 0.14s ease-out;
   min-width: 38px;
   box-sizing: border-box;
 }
@@ -1531,15 +1519,17 @@ input:checked+.slider:before {
 }
 
 .metro-pulse-card.active-beat {
-  background: var(--fundoA);
-  border-color: var(--colorA);
+  transition: none !important;
+  background: var(--fundoA) !important;
+  border-color: var(--colorA) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
 }
 
 .metro-pulse-card.downbeat.active-beat {
-  border-color: #ffd700;
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+  transition: none !important;
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.65);
 }
 
 .pulse-lamp-header {
@@ -1570,17 +1560,19 @@ input:checked+.slider:before {
   height: 7px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
-  transition: all 0.12s ease;
+  transition: background-color 0.14s ease-out, box-shadow 0.14s ease-out;
 }
 
 .pulse-lamp-dot.active {
-  background: #00ff88;
-  box-shadow: 0 0 7px #00ff88;
+  transition: none !important;
+  background: #00ff88 !important;
+  box-shadow: 0 0 9px #00ff88;
 }
 
 .metro-pulse-card.downbeat .pulse-lamp-dot.active {
-  background: #ffd700;
-  box-shadow: 0 0 9px #ffd700;
+  transition: none !important;
+  background: #ffd700 !important;
+  box-shadow: 0 0 12px #ffd700;
 }
 
 /* Subdivision Bars: Fixed proportion occupying the space of 5 divisions */
@@ -1604,7 +1596,7 @@ input:checked+.slider:before {
   color: var(--colorB);
   padding: 0 !important;
   margin: 0 !important;
-  transition: background-color 0.08s ease, color 0.08s ease, box-shadow 0.08s ease, flex 0.12s ease;
+  transition: background-color 0.14s ease-out, color 0.14s ease-out, box-shadow 0.14s ease-out, border-color 0.14s ease-out;
   flex: 1 1 0 !important;
   min-height: 0 !important;
   height: 100% !important;
@@ -1617,17 +1609,19 @@ input:checked+.slider:before {
 }
 
 .subdivision.active {
-  background-color: var(--colorD) !important;
+  transition: none !important;
+  background-color: var(--colorD, #38bdf8) !important;
   color: #000 !important;
-  border-color: var(--colorD) !important;
-  box-shadow: 0 0 10px var(--colorD), inset 0 0 4px rgba(255, 255, 255, 0.4) !important;
+  border-color: var(--colorD, #38bdf8) !important;
+  box-shadow: 0 0 12px var(--colorD, #38bdf8), inset 0 0 4px rgba(255, 255, 255, 0.6) !important;
 }
 
 .metro-pulse-card.downbeat .subdivision.active {
+  transition: none !important;
   background-color: #ffd700 !important;
   color: #000 !important;
   border-color: #ffd700 !important;
-  box-shadow: 0 0 12px #ffd700, inset 0 0 4px rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 14px #ffd700, inset 0 0 5px rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Compact Landscape Screen Optimization */

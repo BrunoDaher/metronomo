@@ -27,6 +27,7 @@ interface MetronomoTabProps {
   tapTempo?: () => void;
   tempoName?: string;
   isDigital?: boolean;
+  startAudioTime?: number;
 }
 
 export const MetronomoTab: React.FC<MetronomoTabProps> = ({
@@ -48,7 +49,8 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
   bellEnabled = true,
   setBellEnabled,
   tapTempo,
-  isDigital = false
+  isDigital = false,
+  startAudioTime = 0
 }) => {
   const [tapActive, setTapActive] = useState<boolean>(false);
 
@@ -80,6 +82,7 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
               bellEnabled={bellEnabled}
               onToggleBell={setBellEnabled}
               deviceType={deviceType}
+              startAudioTime={startAudioTime}
             />
           </section>
         )}
