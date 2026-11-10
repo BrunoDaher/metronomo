@@ -45,15 +45,131 @@ export function getTempoName(bpm: number): string {
 
 // Global lightweight Web Audio Context
 let globalAudioCtx: AudioContext | null = null;
+let silentAudioElement: HTMLAudioElement | null = null;
+
 export function getMetronomeAudioContext(): AudioContext {
   if (!globalAudioCtx) {
     const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
     globalAudioCtx = new AudioContextClass();
   }
-  if (globalAudioCtx.state === 'suspended') {
-    globalAudioCtx.resume().catch(() => {});
-  }
   return globalAudioCtx;
+}
+
+/**
+ * Mobile-First Audio Unlocker:
+ * 1. Resumes suspended AudioContext within direct user gesture.
+ * 2. Plays a 1-sample silent Web Audio buffer to kickstart WebKit hardware on iOS.
+ * 3. Plays a silent HTMLAudioElement to engage AVAudioSessionCategoryPlayback on iOS
+ *    so sounds play even if the iPhone physical mute/silent switch is engaged.
+ */
+export function unlockAudioContext(): AudioContext {
+  const ctx = getMetronomeAudioContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+
+  // 1-sample silent buffer for iOS WebKit hardware
+  try {
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+  } catch {}
+
+  // iOS silent switch bypass
+  try {
+    if (!silentAudioElement && typeof document !== 'undefined') {
+      silentAudioElement = document.createElement('audio');
+      silentAudioElement.setAttribute('x-webkit-airplay', 'deny');
+      silentAudioElement.setAttribute('playsinline', '');
+      silentAudioElement.setAttribute('webkit-playsinline', '');
+      silentAudioElement.loop = true;
+      silentAudioElement.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+    }
+    if (silentAudioElement && silentAudioElement.paused) {
+      silentAudioElement.play().catch(() => {});
+    }
+  } catch {}
+
+  return ctx;
+}
+
+export type ClickType = 'downbeat' | 'beat' | 'subdivision';
+
+/**
+ * Precise Acoustic Wood Metronome Synthesis at target hardware time.
+ * - Downbeat: Forte (1450 -> 480 Hz, gain 0.85) + Sino opcional (2400 Hz)
+ * - Regular Beat: Médio (950 -> 340 Hz, gain 0.70)
+ * - Subdivision: Baixo / Mais suave (1100 -> 500 Hz, gain 0.28) para marcar sem sobrepor
+ */
+export function playClickAt(time: number, type: ClickType, bellEnabled: boolean = true) {
+  try {
+    const ctx = getMetronomeAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    filter.type = 'bandpass';
+
+    if (type === 'downbeat') {
+      filter.frequency.setValueAtTime(1900, time);
+      filter.Q.setValueAtTime(5.5, time);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1450, time);
+      osc.frequency.exponentialRampToValueAtTime(480, time + 0.035);
+
+      gain.gain.setValueAtTime(0.85, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+    } else if (type === 'beat') {
+      filter.frequency.setValueAtTime(1300, time);
+      filter.Q.setValueAtTime(5.5, time);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(950, time);
+      osc.frequency.exponentialRampToValueAtTime(340, time + 0.035);
+
+      gain.gain.setValueAtTime(0.70, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+    } else {
+      // Subdivisão: Som mais suave e baixo para marcar o ritmo
+      filter.frequency.setValueAtTime(1650, time);
+      filter.Q.setValueAtTime(4.5, time);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, time);
+      osc.frequency.exponentialRampToValueAtTime(500, time + 0.022);
+
+      gain.gain.setValueAtTime(0.28, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.025);
+    }
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(time);
+    osc.stop(time + 0.045);
+
+    // Downbeat bell chime (quando ativado)
+    if (type === 'downbeat' && bellEnabled) {
+      const bellOsc = ctx.createOscillator();
+      const bellGain = ctx.createGain();
+
+      bellOsc.type = 'sine';
+      bellOsc.frequency.setValueAtTime(2400, time);
+
+      bellGain.gain.setValueAtTime(0.22, time);
+      bellGain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+
+      bellOsc.connect(bellGain);
+      bellGain.connect(ctx.destination);
+
+      bellOsc.start(time);
+      bellOsc.stop(time + 0.18);
+    }
+  } catch {}
 }
 
 export function useMetronome() {
@@ -66,9 +182,192 @@ export function useMetronome() {
   const [activeSubdivision, setActiveSubdivision] = useState<{ pulse: number; sub: number } | null>(null);
   const [bellEnabled, setBellEnabled] = useState<boolean>(true);
 
+  // Synchronized state refs for audio lookahead scheduler
+  const bpmRef = useRef<number>(bpm);
+  const pulsosRef = useRef<number>(pulsos);
+  const figuraCountRef = useRef<number>(figuraCount);
+  const bellEnabledRef = useRef<boolean>(bellEnabled);
+  const isRunningRef = useRef<boolean>(isRunning);
+
+  bpmRef.current = bpm;
+  pulsosRef.current = pulsos;
+  figuraCountRef.current = figuraCount;
+  bellEnabledRef.current = bellEnabled;
+  isRunningRef.current = isRunning;
+
+  // Lookahead Scheduler state
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const animFrameRef = useRef<number | null>(null);
+  const nextNoteTimeRef = useRef<number>(0);
   const pulseIndexRef = useRef<number>(1);
+  const subIndexRef = useRef<number>(0);
+  const notesInQueueRef = useRef<Array<{ pulse: number; sub: number; time: number }>>([]);
   const tapTimesRef = useRef<number[]>([]);
+
+  // Advance scheduler by 1 subdivision unit
+  const advanceNote = useCallback(() => {
+    const secondsPerBeat = 60.0 / bpmRef.current;
+    const currentSubDiv = Math.max(1, figuraCountRef.current);
+    const secondsPerSub = secondsPerBeat / currentSubDiv;
+
+    nextNoteTimeRef.current += secondsPerSub;
+
+    subIndexRef.current += 1;
+    if (subIndexRef.current >= currentSubDiv) {
+      subIndexRef.current = 0;
+      pulseIndexRef.current += 1;
+      if (pulseIndexRef.current > pulsosRef.current) {
+        pulseIndexRef.current = 1;
+      }
+    }
+  }, []);
+
+  // Scheduler tick: runs periodically and schedules notes ahead in the AudioContext clock
+  const scheduler = useCallback(() => {
+    const ctx = getMetronomeAudioContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    // When backgrounded or hidden on mobile, expand lookahead to prevent starvation
+    const isHidden = typeof document !== 'undefined' && document.hidden;
+    const scheduleAheadTime = isHidden ? 1.5 : 0.12;
+
+    while (nextNoteTimeRef.current < ctx.currentTime + scheduleAheadTime) {
+      const pulse = pulseIndexRef.current;
+      const sub = subIndexRef.current;
+      const time = nextNoteTimeRef.current;
+
+      let type: ClickType;
+      if (sub === 0) {
+        type = pulse === 1 ? 'downbeat' : 'beat';
+      } else {
+        type = 'subdivision';
+      }
+
+      playClickAt(time, type, bellEnabledRef.current);
+
+      notesInQueueRef.current.push({ pulse, sub, time });
+      if (notesInQueueRef.current.length > 40) {
+        notesInQueueRef.current.splice(0, notesInQueueRef.current.length - 25);
+      }
+
+      advanceNote();
+    }
+  }, [advanceNote]);
+
+  // UI animation frame: synchronizes visual beat lamps and subdivision pills with audio playback
+  useEffect(() => {
+    if (!isRunning) return;
+
+    let mounted = true;
+
+    const drawUI = () => {
+      if (!mounted || !isRunningRef.current) return;
+
+      const ctx = getMetronomeAudioContext();
+      const currentAudioTime = ctx.currentTime;
+
+      let currentNote: { pulse: number; sub: number; time: number } | null = null;
+      while (notesInQueueRef.current.length > 0 && notesInQueueRef.current[0].time <= currentAudioTime) {
+        currentNote = notesInQueueRef.current.shift()!;
+      }
+
+      if (currentNote) {
+        if (currentNote.sub === 0) {
+          setCurrentPulse(currentNote.pulse);
+        }
+        setActiveSubdivision({ pulse: currentNote.pulse, sub: currentNote.sub });
+      }
+
+      animFrameRef.current = requestAnimationFrame(drawUI);
+    };
+
+    animFrameRef.current = requestAnimationFrame(drawUI);
+
+    return () => {
+      mounted = false;
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+    };
+  }, [isRunning]);
+
+  // Main Metronome start/stop effect with lookahead timer
+  useEffect(() => {
+    if (isRunning) {
+      const ctx = unlockAudioContext();
+      pulseIndexRef.current = 1;
+      subIndexRef.current = 0;
+      nextNoteTimeRef.current = ctx.currentTime + 0.02;
+      notesInQueueRef.current = [];
+
+      scheduler();
+      timerRef.current = setInterval(scheduler, 25);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = null;
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+      notesInQueueRef.current = [];
+      setCurrentPulse(1);
+      setActiveSubdivision(null);
+
+      // Pause background silent audio element when metronome stops
+      if (silentAudioElement && !silentAudioElement.paused) {
+        silentAudioElement.pause();
+      }
+    }
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isRunning, scheduler]);
+
+  // Lifecycle & Mobile Visibility recovery
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (!document.hidden && isRunningRef.current) {
+        const ctx = getMetronomeAudioContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('pageshow', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('pageshow', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+    };
+  }, []);
+
+  // Global user gesture unlocker for mobile (iOS Safari / WebKit and Android)
+  useEffect(() => {
+    const handleGesture = () => {
+      unlockAudioContext();
+    };
+
+    window.addEventListener('touchstart', handleGesture, { capture: true, passive: true });
+    window.addEventListener('touchend', handleGesture, { capture: true, passive: true });
+    window.addEventListener('pointerdown', handleGesture, { capture: true, passive: true });
+    window.addEventListener('click', handleGesture, { capture: true, passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleGesture, { capture: true });
+      window.removeEventListener('touchend', handleGesture, { capture: true });
+      window.removeEventListener('pointerdown', handleGesture, { capture: true });
+      window.removeEventListener('click', handleGesture, { capture: true });
+    };
+  }, []);
 
   const setMetric = useCallback((m: string) => {
     setMetricState(m);
@@ -86,104 +385,14 @@ export function useMetronome() {
     }
   }, []);
 
-  // Standard Acoustic Woodblock Click (Padrão Madeira & Finish, sem beep)
-  const playClick = useCallback(
-    (isDownbeat: boolean) => {
-      try {
-        const ctx = getMetronomeAudioContext();
-        const now = ctx.currentTime;
-
-        // Acoustic Woodblock / Mechanical Metronome Click
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-
-        filter.type = 'bandpass';
-        filter.frequency.value = isDownbeat ? 1900 : 1300;
-        filter.Q.value = 5.5;
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(isDownbeat ? 1450 : 950, now);
-        osc.frequency.exponentialRampToValueAtTime(isDownbeat ? 480 : 340, now + 0.035);
-
-        gain.gain.setValueAtTime(0.8, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.045);
-
-        // Downbeat bell chime (enabled only if bell toggle is on)
-        if (isDownbeat && bellEnabled) {
-          const bellOsc = ctx.createOscillator();
-          const bellGain = ctx.createGain();
-
-          bellOsc.type = 'sine';
-          bellOsc.frequency.value = 2400;
-
-          bellGain.gain.setValueAtTime(0.2, now);
-          bellGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-
-          bellOsc.connect(bellGain);
-          bellGain.connect(ctx.destination);
-
-          bellOsc.start(now);
-          bellOsc.stop(now + 0.15);
-        }
-      } catch {
-        // Audio might be blocked until user interaction
-      }
-    },
-    [bellEnabled]
-  );
-
-  const tick = useCallback(() => {
-    const pulse = pulseIndexRef.current;
-    setCurrentPulse(pulse);
-
-    // Play metronome audio click on beat
-    playClick(pulse === 1);
-
-    const beatInterval = (60 / bpm) * 1000;
-    const subInterval = beatInterval / figuraCount;
-
-    for (let sub = 0; sub < figuraCount; sub++) {
-      setTimeout(() => {
-        setActiveSubdivision({ pulse, sub });
-        setTimeout(() => {
-          setActiveSubdivision((prev) => (prev?.pulse === pulse && prev?.sub === sub ? null : prev));
-        }, subInterval * 0.8);
-      }, sub * subInterval);
-    }
-
-    pulseIndexRef.current = pulse < pulsos ? pulse + 1 : 1;
-  }, [bpm, pulsos, figuraCount, playClick]);
-
-  useEffect(() => {
-    if (isRunning) {
-      pulseIndexRef.current = 1;
-      tick();
-      const interval = (60 / bpm) * 1000;
-      timerRef.current = setInterval(tick, interval);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = null;
-      setCurrentPulse(1);
-      setActiveSubdivision(null);
-    }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isRunning, bpm, tick]);
-
-  const toggleMetronome = () => setIsRunning((prev) => !prev);
+  const toggleMetronome = useCallback(() => {
+    unlockAudioContext();
+    setIsRunning((prev) => !prev);
+  }, []);
 
   // Tap Tempo calculation
   const tapTempo = useCallback(() => {
+    unlockAudioContext();
     const now = performance.now();
     const taps = tapTimesRef.current.filter((t) => now - t < 2500);
     taps.push(now);

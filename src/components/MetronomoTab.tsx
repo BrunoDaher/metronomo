@@ -299,9 +299,8 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
                   <div
                     key={p}
                     id={`p${p}`}
-                    className={`metro-pulse-card flexColBetween ${
-                      isCurrentPulse ? 'active-beat' : ''
-                    } ${isDownbeat ? 'downbeat' : ''}`}
+                    className={`metro-pulse-card flexColBetween ${isCurrentPulse ? 'active-beat' : ''
+                      } ${isDownbeat ? 'downbeat' : ''}`}
                   >
                     {/* Header Lamp */}
                     <div className="pulse-lamp-header flexrow itemCenter justContBetween">
