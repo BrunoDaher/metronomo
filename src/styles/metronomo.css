@@ -1637,3 +1637,60 @@ input:checked+.slider:before {
     min-height: 90px;
   }
 }
+
+/* ==========================================================================
+   APP FOOTER: ANALÓGICO ⟷ DIGITAL TOGGLE
+   ========================================================================== */
+.metro-app-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--header-bg, rgba(18, 19, 23, 0.94));
+  backdrop-filter: blur(14px);
+  padding: 0.55rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+}
+
+.metro-footer-toggle-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 5px 16px;
+  border-radius: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.metro-footer-toggle-wrap:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.footer-mode-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--colorD, #9ca3af);
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.footer-mode-label.active-analog {
+  color: var(--accent-color, #f59e0b) !important;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+}
+
+.footer-mode-label.active-digital {
+  color: var(--colorC, #38bdf8) !important;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+}

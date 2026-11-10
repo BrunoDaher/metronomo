@@ -11,6 +11,9 @@ export const App: React.FC = () => {
   const metronome = useMetronome();
   const device = useDevice();
 
+  // Mode: Analógico (false) vs Digital / Subdivisões (true)
+  const [isDigital, setIsDigital] = useState<boolean>(false);
+
   // Theme Management
   const [currentTheme, setCurrentTheme] = useState<Theme>(getSavedTheme);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
@@ -206,20 +209,55 @@ export const App: React.FC = () => {
           setBellEnabled={metronome.setBellEnabled}
           tapTempo={metronome.tapTempo}
           tempoName={metronome.tempoName}
+          isDigital={isDigital}
         />
       </main>
 
-      {/* Footer */}
-      <footer
-        style={{
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-          padding: '0.6rem 1rem',
-          textAlign: 'center',
-          fontSize: '0.74rem',
-          color: 'rgba(255, 255, 255, 0.45)'
-        }}
-      >
-        Desenvolvido por <strong>Bruno Daher</strong> • Maelzel Mechanical & Digital Precision Web Audio API
+      {/* Footer com Chave Toggle Analógico ⟷ Digital */}
+      <footer className="metro-app-footer">
+        <div
+          className="metro-footer-toggle-wrap"
+          onClick={() => setIsDigital((prev) => !prev)}
+          title={isDigital ? 'Alternar para Metrônomo Analógico' : 'Alternar para Metrônomo Digital'}
+        >
+          <span
+            className={`footer-mode-label ${!isDigital ? 'active-analog' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDigital(false);
+            }}
+          >
+            <i className="bi bi-clock-history" style={{ marginRight: '6px' }} />
+            Analógico
+          </span>
+
+          <label
+            htmlFor="footerModeToggle"
+            className="switch metro-switch"
+            style={{ margin: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              id="footerModeToggle"
+              checked={isDigital}
+              onChange={(e) => setIsDigital(e.target.checked)}
+              aria-label="Alternar entre Analógico e Digital"
+            />
+            <span className="slider round" />
+          </label>
+
+          <span
+            className={`footer-mode-label ${isDigital ? 'active-digital' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDigital(true);
+            }}
+          >
+            Digital
+            <i className="bi bi-soundwave" style={{ marginLeft: '6px' }} />
+          </span>
+        </div>
       </footer>
 
       {/* Theme Selection Modal */}

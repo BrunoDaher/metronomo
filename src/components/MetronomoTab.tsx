@@ -5,7 +5,6 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import { FiguraOption, TimeSignatureOption, TIME_SIGNATURES } from '../hooks/useMetronome';
 import { AnalogMetronome } from './AnalogMetronome';
-import coelhoImg from '../assets/icoApp.png';
 
 interface MetronomoTabProps {
   bpm: number;
@@ -27,6 +26,7 @@ interface MetronomoTabProps {
   setBellEnabled?: (val: boolean) => void;
   tapTempo?: () => void;
   tempoName?: string;
+  isDigital?: boolean;
 }
 
 export const MetronomoTab: React.FC<MetronomoTabProps> = ({
@@ -48,9 +48,8 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
   bellEnabled = true,
   setBellEnabled,
   tapTempo,
-  tempoName = 'Moderato'
+  isDigital = false
 }) => {
-  const [showSubdivisions, setShowSubdivisions] = useState<boolean>(false);
   const [tapActive, setTapActive] = useState<boolean>(false);
 
   const handleTap = () => {
@@ -67,69 +66,10 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
       className={`painel flexColBetween ${deviceType}`}
       style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%', maxWidth: '960px', margin: '0 auto' }}
     >
-      {/* Top Bar: Subdivisões Switcher & Title */}
-      <div className="metro-header comp">
-        <div className="metro-title flexrow itemCenter gap1">
-          <img
-            src={coelhoImg}
-            alt="Coelho"
-            style={{
-              width: '26px',
-              height: '26px',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              border: '1.5px solid var(--accent-color, #f59e0b)'
-            }}
-          />
-          <div className="flexcol">
-            <span className="metro-heading">Metrônomo</span>
-            <span className="metro-tempo-badge-text">
-              {showSubdivisions ? `Subdivisões • ${bpm} BPM` : `${tempoName} • ${bpm} BPM`}
-            </span>
-          </div>
-        </div>
-
-        {/* Chave (Toggle Switch) para trocar para tela de Subdivisões */}
-        <div
-          className="flexrow itemCenter gap1"
-          style={{ cursor: 'pointer', userSelect: 'none' }}
-          onClick={() => setShowSubdivisions((prev) => !prev)}
-          title={showSubdivisions ? 'Voltar para o Metrônomo Analógico' : 'Abrir tela de Subdivisões e Compassos'}
-        >
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: showSubdivisions ? 'var(--accent-color, #f59e0b)' : 'var(--colorD, #9ca3af)',
-              transition: 'color 0.2s ease',
-              letterSpacing: '0.3px'
-            }}
-          >
-            Subdivisões
-          </span>
-
-          <label
-            htmlFor="subdivToggle"
-            className="switch metro-switch"
-            style={{ margin: 0 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <input
-              type="checkbox"
-              id="subdivToggle"
-              checked={showSubdivisions}
-              onChange={(e) => setShowSubdivisions(e.target.checked)}
-              aria-label="Alternar para tela de subdivisões"
-            />
-            <span className="slider round" />
-          </label>
-        </div>
-      </div>
-
-      {/* Main Container: Metrônomo Analógico OU Verificação de Subdivisões */}
+      {/* Main Container: Metrônomo Analógico OU Digital (Subdivisões) */}
       <div className="metro-content-container w-100">
         {/* TELA 1: METRÔNOMO ANALÓGICO (Padrão) */}
-        {!showSubdivisions && (
+        {!isDigital && (
           <section className="metro-analog-section flexColCenter w-100">
             <AnalogMetronome
               bpm={bpm}
@@ -144,8 +84,8 @@ export const MetronomoTab: React.FC<MetronomoTabProps> = ({
           </section>
         )}
 
-        {/* TELA 2: VERIFICAÇÃO DE SUBDIVISÕES E COMPASSOS */}
-        {showSubdivisions && (
+        {/* TELA 2: VERIFICAÇÃO DE SUBDIVISÕES E COMPASSOS (Digital) */}
+        {isDigital && (
           <section className="metro-digital-section flexcol gap1 w-100">
             {/* Control Bar: Play/Pause, Tempo Readout (No Steppers), and Finger-Friendly Tap Tempo */}
             <article className="comp bgDark p-1 flexrow justContBetween itemCenter gap2 flexWrap">
